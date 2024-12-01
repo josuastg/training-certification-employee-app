@@ -36,7 +36,7 @@
   --section-gap: 160px;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: white) {
   :root {
     --color-background: var(--vt-c-black);
     --color-background-soft: var(--vt-c-black-soft);
@@ -78,6 +78,7 @@ body {
     'Fira Sans',
     'Droid Sans',
     'Helvetica Neue',
+    "Poppins",
     sans-serif;
   font-size: 15px;
   text-rendering: optimizeLegibility;
