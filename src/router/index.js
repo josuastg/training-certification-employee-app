@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Register from "../views/Register.vue";
 import Dashboard from "../views/Dashboard.vue";
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from '@/firebase';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +22,7 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: Dashboard,
+      meta: { requiresAuth: true },
     },
     {
       path: '/about',
@@ -31,5 +34,32 @@ const router = createRouter({
     },
   ],
 })
+
+// Navigation guard to check authentication
+router.beforeEach((to, from, next) => {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      if (to.meta.requiresAuth) {
+        next({ name: "login" });
+        return;
+      }
+      signOut(auth);
+      next();
+      return;
+    } else {
+      if (to.name === "login") {
+        if (from.name === 'register') {
+          signOut(auth);
+          next();
+          return;
+        } else {
+          next("dashboard");
+          return;
+        }
+      }
+    }
+    next();
+  });
+});
 
 export default router

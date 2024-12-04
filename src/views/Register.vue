@@ -1,10 +1,29 @@
 <script setup>
-import { ref } from 'vue'
-
+import { auth, db } from '@/firebase'
+import router from '@/router'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { doc, setDoc } from 'firebase/firestore'
+import { computed, reactive, ref } from 'vue'
+import { useLoading } from 'vue-loading-overlay'
+import { toast } from 'vue3-toastify'
 const passwordType = ref('password')
 const iconType = ref('eye-slash')
+const error = ref(null)
+
+const $loading = useLoading({
+  color: '#dc2626',
+})
+const form = reactive({
+  employee_id: '',
+  password: '',
+  confirm_password: '',
+  employee_name: '',
+  employee_contact_phone: '',
+  employee_email: '',
+  gender: '',
+})
 function showPassword() {
-  if (passwordType === 'password' && iconType === 'eye-slash') {
+  if (passwordType.value === 'password' && iconType.value === 'eye-slash') {
     passwordType.value = 'text'
     iconType.value = 'eye'
   } else {
@@ -12,18 +31,98 @@ function showPassword() {
     iconType.value = 'eye-slash'
   }
 }
+const disabledButton = computed(() => {
+  return (
+    !form.employee_name.length ||
+    !form.gender.length ||
+    !form.employee_contact_phone.toString().length ||
+    !form.confirm_password.length
+  )
+})
+const confirmPasswordType = ref('password')
+const confirmIconType = ref('eye-slash')
+function showConfirmPassword() {
+  if (confirmPasswordType.value === 'password' && confirmIconType.value === 'eye-slash') {
+    confirmPasswordType.value = 'text'
+    confirmIconType.value = 'eye'
+  } else {
+    confirmPasswordType.value = 'password'
+    confirmIconType.value = 'eye-slash'
+  }
+}
+
+async function registerEmployee() {
+  const loader = $loading.show()
+  try {
+    // Register user with email and password
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      form.employee_email,
+      form.password
+    )
+    // Get the registered user's unique ID
+    const userId = userCredential.user.uid
+    // Save additional user info to Firestore
+    if (userId) {
+      await setDoc(doc(db, 'employee', userId), {
+        employee_id: userId,
+        employee_name: form.employee_name,
+        employee_contact_phone: form.employee_contact_phone.toString(),
+        employee_email: form.employee_email,
+        gender: form.gender,
+      })
+      // Redirect to login after successful registration
+      router.push('/')
+    }
+  } catch (reason) {
+    if (
+      form.password.length &&
+      form.confirm_password.length &&
+      form.password !== form.confirm_password
+    ) {
+      error.value = 'Password tidak sama dengan konfirmasi password, mohon dicek kembali!'
+    } else {
+      if (reason.code === 'auth/invalid-email') {
+        error.value = !form.employee_email.length
+          ? 'Isi Email Anda ! '
+          : 'Email yang anda masukkan salah!'
+      }
+      if (reason.code === 'auth/missing-email' && !form.employee_email.length) {
+        error.value = 'Isi Email Anda !'
+      }
+      if (reason.code === 'auth/email-already-in-use') {
+        error.value = 'Email anda sudah terdaftar, gunakan email yang lain!'
+      }
+      if (reason.code === 'auth/missing-password' && !form.password.length) {
+        error.value = 'Anda belum memasukkan password!'
+      }
+    }
+    toast(error.value, {
+      theme: 'colored',
+      type: 'error',
+      position: 'top-center',
+      closeOnClick: true,
+      hideProgressBar: true,
+      transition: 'bounce',
+      dangerouslyHTMLString: true,
+    })
+  } finally {
+    loader.hide()
+  }
+}
 </script>
 <template>
   <div class="bg-gray-50 font-poppins">
-    <div class="min-h-screen flex flex-col items-center justify-center py-4 px-4">
+    <div class="min-h-screen flex flex-col items-center justify-center py-5 px-4">
       <p class="text-gray-800 font-bold text-3xl text-center">Register Your Account</p>
       <div class="max-w-md w-full mt-4">
         <div class="p-8 rounded-2xl bg-white shadow">
-          <div class="mt-8 space-y-4">
+          <div class="mt-4 space-y-4">
             <form>
               <label class="text-gray-800 text-sm mb-2 block">Nama Lengkap</label>
               <div class="relative flex items-center">
                 <input
+                  v-model="form.employee_name"
                   name="fullname"
                   type="text"
                   required
@@ -49,6 +148,7 @@ function showPassword() {
               <label class="text-gray-800 text-sm mb-2 block">Email</label>
               <div class="relative flex items-center">
                 <input
+                  v-model="form.employee_email"
                   name="email"
                   type="email"
                   required
@@ -87,12 +187,13 @@ function showPassword() {
               <label class="text-gray-800 text-sm mb-2 block">No. Telepon</label>
               <div class="relative flex items-center">
                 <input
+                  v-model="form.employee_contact_phone"
                   name="telepon"
                   type="number"
                   required
                   maxlength="15"
                   class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-red-600"
-                  placeholder="Contoh : 628000000/08200000"
+                  placeholder="Contoh : 628000000"
                 />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -113,6 +214,7 @@ function showPassword() {
               <label class="text-gray-800 text-sm mb-2 block">Password</label>
               <div class="relative flex items-center">
                 <input
+                  v-model="form.password"
                   name="password"
                   :type="passwordType"
                   required
@@ -152,31 +254,49 @@ function showPassword() {
               <label class="text-gray-800 text-sm mb-2 block">Confirm Password</label>
               <div class="relative flex items-center">
                 <input
+                  v-model="form.confirm_password"
                   name="confirm_password"
-                  type="password"
+                  :type="confirmPasswordType"
                   required
                   class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-red-600"
                   placeholder="Masukan konfirmasi password anda"
                 />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="#bbb"
-                  stroke="#bbb"
+                <button
+                  @click="showConfirmPassword"
                   class="w-4 h-4 absolute right-4 cursor-pointer"
-                  viewBox="0 0 128 128"
                 >
-                  <path
-                    d="M64 104C22.127 104 1.367 67.496.504 65.943a4 4 0 0 1 0-3.887C1.367 60.504 22.127 24 64 24s62.633 36.504 63.496 38.057a4 4 0 0 1 0 3.887C126.633 67.496 105.873 104 64 104zM8.707 63.994C13.465 71.205 32.146 96 64 96c31.955 0 50.553-24.775 55.293-31.994C114.535 56.795 95.854 32 64 32 32.045 32 13.447 56.775 8.707 63.994zM64 88c-13.234 0-24-10.766-24-24s10.766-24 24-24 24 10.766 24 24-10.766 24-24 24zm0-40c-8.822 0-16 7.178-16 16s7.178 16 16 16 16-7.178 16-16-7.178-16-16-16z"
-                    data-original="#000000"
-                  ></path>
-                </svg>
+                  <svg
+                    v-if="iconType === 'eye'"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="#bbb"
+                    stroke="#bbb"
+                    viewBox="0 0 128 128"
+                  >
+                    <path
+                      d="M64 104C22.127 104 1.367 67.496.504 65.943a4 4 0 0 1 0-3.887C1.367 60.504 22.127 24 64 24s62.633 36.504 63.496 38.057a4 4 0 0 1 0 3.887C126.633 67.496 105.873 104 64 104zM8.707 63.994C13.465 71.205 32.146 96 64 96c31.955 0 50.553-24.775 55.293-31.994C114.535 56.795 95.854 32 64 32 32.045 32 13.447 56.775 8.707 63.994zM64 88c-13.234 0-24-10.766-24-24s10.766-24 24-24 24 10.766 24 24-10.766 24-24 24zm0-40c-8.822 0-16 7.178-16 16s7.178 16 16 16 16-7.178 16-16-7.178-16-16-16z"
+                      data-original="#000000"
+                    ></path>
+                  </svg>
+                  <svg
+                    v-else
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="#bbb"
+                    stroke="#bbb"
+                    viewBox="0 0 128 128"
+                  >
+                    <path
+                      d="M64 104C22.127 104 1.367 67.496.504 65.943a4 4 0 0 1 0-3.887C1.367 60.504 22.127 24 64 24s62.633 36.504 63.496 38.057a4 4 0 0 1 0 3.887C126.633 67.496 105.873 104 64 104zM8.707 63.994C13.465 71.205 32.146 96 64 96c31.955 0 50.553-24.775 55.293-31.994C114.535 56.795 95.854 32 64 32 32.045 32 13.447 56.775 8.707 63.994zM64 88c-13.234 0-24-10.766-24-24s10.766-24 24-24 24 10.766 24 24-10.766 24-24 24zm-6.828-8.828a4 4 0 0 1 0-5.656l24-24a4 4 0 1 1 5.656 5.656l-24 24a4 4 0 0 1-5.656 0z"
+                      data-original="#000000"
+                    ></path>
+                  </svg>
+                </button>
               </div>
             </div>
-
             <div>
               <label class="text-gray-800 text-sm mb-2 block">Jenis Kelamin</label>
               <div class="relative flex items-center">
                 <v-select
+                  v-model="form.gender"
                   :options="['Pria', 'Wanita']"
                   class="w-full"
                   placeholder="Pilih jenis kelamin anda"
@@ -186,9 +306,14 @@ function showPassword() {
 
             <div class="!mt-8">
               <button
-                @click="$router.push('/')"
+                :disabled="disabledButton"
+                @click="!disabledButton ? registerEmployee() : null"
                 type="button"
-                class="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none"
+                :class="`w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white focus:outline-none ${
+                  !disabledButton
+                    ? 'bg-red-600 hover:bg-red-700'
+                    : 'bg-gray-400 cursor-not-allowed opacity-50'
+                }`"
               >
                 Register
               </button>

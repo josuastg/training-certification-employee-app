@@ -1,5 +1,12 @@
 <script setup>
 import BasedLogo from '@/components/BasedLogo.vue'
+import { auth } from '@/firebase'
+import router from '@/router'
+import { signOut } from 'firebase/auth'
+async function onLogout() {
+  await signOut(auth)
+  router.push('/')
+}
 </script>
 
 <template>
@@ -130,7 +137,7 @@ import BasedLogo from '@/components/BasedLogo.vue'
               </li>
               <li>
                 <a
-                  @click="$router.push('/')"
+                  @click="onLogout"
                   href="javascript:void(0)"
                   class="menu-item text-gray-800 text-sm flex items-center cursor-pointer hover:bg-[#F8E9E9] rounded-md px-3 py-3 transition-all duration-300"
                 >
