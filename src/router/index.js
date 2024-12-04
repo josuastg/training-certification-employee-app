@@ -48,14 +48,8 @@ router.beforeEach((to, from, next) => {
       return;
     } else {
       if (to.name === "login") {
-        if (from.name === 'register') {
-          signOut(auth);
-          next();
-          return;
-        } else {
-          next("dashboard");
-          return;
-        }
+        next("dashboard");
+        return;
       }
     }
     next();

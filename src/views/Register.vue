@@ -1,7 +1,7 @@
 <script setup>
 import { auth, db } from '@/firebase'
 import router from '@/router'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signOut } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
 import { computed, reactive, ref } from 'vue'
 import { useLoading } from 'vue-loading-overlay'
@@ -73,6 +73,7 @@ async function registerEmployee() {
       })
       // Redirect to login after successful registration
       router.push('/')
+      signOut(auth);
     }
   } catch (reason) {
     if (
