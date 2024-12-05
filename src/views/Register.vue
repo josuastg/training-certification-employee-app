@@ -55,48 +55,57 @@ async function registerEmployee() {
   const loader = $loading.show()
   try {
     // Register user with email and password
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      form.employee_email,
-      form.password
-    )
-    // Get the registered user's unique ID
-    const userId = userCredential.user.uid
-    // Save additional user info to Firestore
-    if (userId) {
-      await setDoc(doc(db, 'employee', userId), {
-        employee_id: userId,
-        employee_name: form.employee_name,
-        employee_contact_phone: form.employee_contact_phone.toString(),
-        employee_email: form.employee_email,
-        gender: form.gender,
-      })
-      // Redirect to login after successful registration
-      router.push('/')
-      signOut(auth);
-    }
-  } catch (reason) {
+
     if (
       form.password.length &&
       form.confirm_password.length &&
       form.password !== form.confirm_password
     ) {
-      error.value = 'Password tidak sama dengan konfirmasi password, mohon dicek kembali!'
+      error.value = toast('Password tidak sama dengan konfirmasi password, mohon dicek kembali!', {
+        theme: 'colored',
+        type: 'error',
+        position: 'top-center',
+        closeOnClick: true,
+        hideProgressBar: true,
+        transition: 'bounce',
+        dangerouslyHTMLString: true,
+      })
     } else {
-      if (reason.code === 'auth/invalid-email') {
-        error.value = !form.employee_email.length
-          ? 'Isi Email Anda ! '
-          : 'Email yang anda masukkan salah!'
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        form.employee_email,
+        form.password
+      )
+      // Get the registered user's unique ID
+      const userId = userCredential.user.uid
+      // Save additional user info to Firestore
+      if (userId) {
+        await setDoc(doc(db, 'employee', userId), {
+          employee_id: userId,
+          employee_name: form.employee_name,
+          employee_contact_phone: form.employee_contact_phone.toString(),
+          employee_email: form.employee_email,
+          gender: form.gender,
+        })
+        // Redirect to login after successful registration
+        router.push('/')
+        signOut(auth)
       }
-      if (reason.code === 'auth/missing-email' && !form.employee_email.length) {
-        error.value = 'Isi Email Anda !'
-      }
-      if (reason.code === 'auth/email-already-in-use') {
-        error.value = 'Email anda sudah terdaftar, gunakan email yang lain!'
-      }
-      if (reason.code === 'auth/missing-password' && !form.password.length) {
-        error.value = 'Anda belum memasukkan password!'
-      }
+    }
+  } catch (reason) {
+    if (reason.code === 'auth/invalid-email') {
+      error.value = !form.employee_email.length
+        ? 'Isi Email Anda ! '
+        : 'Email yang anda masukkan salah!'
+    }
+    if (reason.code === 'auth/missing-email' && !form.employee_email.length) {
+      error.value = 'Isi Email Anda !'
+    }
+    if (reason.code === 'auth/email-already-in-use') {
+      error.value = 'Email anda sudah terdaftar, gunakan email yang lain!'
+    }
+    if (reason.code === 'auth/missing-password' && !form.password.length) {
+      error.value = 'Anda belum memasukkan password!'
     }
     toast(error.value, {
       theme: 'colored',
