@@ -1,7 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Register from "../views/Register.vue";
-import Dashboard from "../views/Dashboard.vue";
+import Layout from "../views/Layout.vue";
+import Dashboard from "../views/dashboard/index.vue";
+import Certification from "../views/certification/index.vue";
+import Feedback from "../views/feedback/index.vue";
+import Training from "../views/training/index.vue";
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/firebase';
 
@@ -20,9 +24,31 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      name: 'dashboard',
-      component: Dashboard,
+      name: 'layout',
+      component: Layout,
       meta: { requiresAuth: true },
+      children: [
+        {
+          path: '/dashboard',
+          name: 'dashboard',
+          component: Dashboard,
+        },
+        {
+          path: '/training',
+          name: 'training',
+          component: Training,
+        },
+        {
+          path: '/certification',
+          name: 'certification',
+          component: Certification,
+        },
+        {
+          path: '/feedback',
+          name: 'feedback',
+          component: Feedback,
+        }
+      ]
     },
     {
       path: '/about',
