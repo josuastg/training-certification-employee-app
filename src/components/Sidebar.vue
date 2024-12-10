@@ -92,7 +92,8 @@ const OnNormalizePhoneNumber = (phoneNumber) => {
             <div class="flex flex-row items-start">
               <div class="flex">
                 <div
-                  :class="`${initial.color} mr-2 w-12 h-12 font-medium text-lg tracking-wider flex flex-col items-center justify-center text-white rounded-full relative`"
+                  :style="`background: ${initial.color}`"
+                  :class="`mr-2 w-12 h-12 font-medium text-lg tracking-wider flex flex-col items-center justify-center text-white rounded-full relative`"
                 >
                   <div
                     class="border-white absolute bottom-0 right-0"
@@ -104,7 +105,7 @@ const OnNormalizePhoneNumber = (phoneNumber) => {
             </div>
             <div class="flex flex-col text-left">
               <div
-                class="font-medium text-14px xxl:text-16px"
+                class="font-medium text-14px xxl:text-16px capitalize"
                 :class="'/profile' === $route.fullPath ? 'text-[#dc2626]' : 'text-gray-800'"
               >
                 {{ onEllipsisString(store.profile.employee_name, 17) }}
@@ -138,7 +139,12 @@ const OnNormalizePhoneNumber = (phoneNumber) => {
         />
       </svg>
     </button>
-    <v-dialog v-model="dialogLogout" max-width="400" transition="dialog-bottom-transition" class="font-poppins">
+    <v-dialog
+      v-model="dialogLogout"
+      max-width="400"
+      transition="dialog-bottom-transition"
+      class="font-poppins"
+    >
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn v-bind="activatorProps"> Open dialogLogout </v-btn>
       </template>

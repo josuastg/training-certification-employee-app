@@ -18,44 +18,44 @@ const onInitialName = (name) => {
         case "I":
         case "Q":
         case "Y":
-            color = "bg-pink-500";
+            color = "#ec4899";
             break;
         case "B":
         case "J":
         case "R":
         case "Z":
-            color = "bg-red-500";
+            color = "#ef4444";
             break;
         case "C":
         case "K":
         case "S":
         case "H":
-            color = "bg-yellow-500";
+            color = "#f59e0b";
             break;
         case "D":
         case "L":
         case "T":
         case "P":
-            color = "bg-green-500";
+            color = "#10b981";
             break;
         case "E":
         case "M":
         case "U":
         case "X":
-            color = "bg-blue-500";
+            color = "#3b82f6";
             break;
         case "F":
         case "N":
         case "V":
-            color = "bg-indigo-500";
+            color = "#6366f1";
             break;
         case "G":
         case "O":
         case "W":
-            color = "bg-purple-500";
+            color = "#8b5cf6";
             break;
         default:
-            color = "bg-gray-400";
+            color = "#9ca3af";
             break;
     }
     return {
