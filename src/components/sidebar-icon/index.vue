@@ -1,9 +1,10 @@
 <script setup>
 import dashboard from './dashboard.vue'
 import certification from './certification.vue'
-import logout from './logout.vue'
+import profile from './profile.vue'
 import training from './training.vue'
 import feedback from './feedback.vue'
+import logout from './logout.vue'
 
 const props = defineProps({
   iconName: {
@@ -15,7 +16,8 @@ const props = defineProps({
 <template>
   <dashboard v-if="iconName === 'dashboard'" />
   <certification v-else-if="iconName === 'certification'" />
-  <logout v-else-if="iconName === 'logout'" />
+  <profile v-else-if="iconName === 'profile'" />
   <training v-else-if="iconName === 'training'" />
   <feedback v-else-if="iconName === 'feedback'" />
+  <logout v-else-if="iconName === 'logout'" />
 </template>

@@ -2,24 +2,37 @@
 import BasedLogo from '@/components/BasedLogo.vue'
 import SidebarIcon from '@/components/sidebar-icon/index.vue'
 import router from '@/router'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { signOut } from 'firebase/auth'
 import { auth } from '@/firebase'
+import { useProfileStore } from '@/stores/profile'
+import initialName from '@/misc/InitialName'
+import ellipsisString from '@/misc/EllipsisString'
+import normalizePhoneNumber from '@/misc/NormalizePhoneNumber'
+
+const store = useProfileStore()
+const dialogLogout = ref(false)
 async function onLogout() {
   await signOut(auth)
   router.push('/')
 }
 const routes = computed(() => {
-  return [
-    ...router.options.routes[2].children,
-    {
-      name: 'logout',
-    },
-  ]
+  return [...router.options.routes[2].children]
 })
 
 const onClick = (path) => {
   router.push(path)
+}
+const initial = computed(() => {
+  return initialName(store.profile.employee_name)
+})
+
+const onEllipsisString = (name, long) => {
+  return ellipsisString(name, long)
+}
+
+const OnNormalizePhoneNumber = (phoneNumber) => {
+  return normalizePhoneNumber(phoneNumber)
 }
 </script>
 <template>
@@ -27,19 +40,19 @@ const onClick = (path) => {
     <nav id="sidebar" class="lg:min-w-[250px] w-max max-lg:min-w-8 font-poppins">
       <div
         id="sidebar-collapse-menu"
-        class="bg-white shadow-lg h-screen fixed top-0 left-0 overflow-auto z-[99] lg:min-w-[250px] lg:w-max max-lg:w-0 max-lg:invisible transition-all duration-500"
+        class="bg-white shadow-lg h-screen fixed top-0 left-0 overflow-hidden z-[99] lg:min-w-[250px] lg:w-max max-lg:w-0 max-lg:invisible transition-all duration-500"
       >
-        <div class="pt-8 pb-2 px-4 sticky top-0 bg-white min-h-[80px] z-[100]">
+        <div class="pt-6 pb-2 px-4 sticky top-0 bg-white min-h-[80px] z-[100]">
           <based-logo />
         </div>
 
-        <div class="py-6 px-4">
-          <div>
+        <div class="grow h-full">
+          <div class="py-6 px-4">
             <ul class="space-y-2">
               <li v-for="route in routes" :key="route">
                 <a
-                  @click="route.name === 'logout' ? onLogout() : onClick(route.path)"
-                  href="javascript:void(0)"
+                  v-if="route.showOnSidebar"
+                  @click="onClick(route.path)"
                   :class="`menu-item ${
                     route.path === $route.fullPath
                       ? ' text-[#dc2626] bg-[#F8E9E9] '
@@ -53,6 +66,57 @@ const onClick = (path) => {
                 </a>
               </li>
             </ul>
+          </div>
+        </div>
+
+        <div
+          v-if="!store.isLoadingProfile"
+          class="sticky bottom-0 min-h-[80px] z-[100] border-t cursor-pointer"
+        >
+          <ul class="px-4 space-y-2 hover:bg-[#F8E9E9]">
+            <li>
+              <a
+                @click="dialogLogout = true"
+                class="menu-item text-gray-800 text-sm flex items-center cursor-pointer hover:bg-[#F8E9E9] hover:text-[#dc2626] rounded-md px-3 py-3"
+              >
+                <SidebarIcon iconName="logout" />
+                <span>LOGOUT</span>
+              </a>
+            </li>
+          </ul>
+          <div
+            class="p-4 flex flex-row items-center hover:bg-[#F8E9E9]"
+            :class="'/profile' === $route.fullPath ? 'bg-[#F8E9E9]' : ''"
+            @click="onClick('/profile')"
+          >
+            <div class="flex flex-row items-start">
+              <div class="flex">
+                <div
+                  :class="`${initial.color} mr-2 w-12 h-12 font-medium text-lg tracking-wider flex flex-col items-center justify-center text-white rounded-full relative`"
+                >
+                  <div
+                    class="border-white absolute bottom-0 right-0"
+                    style="width: 10px; height: 10px"
+                  />
+                  <span class="text-14px xxl:text-16px"> {{ initial.initial }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col text-left">
+              <div
+                class="font-medium text-14px xxl:text-16px"
+                :class="'/profile' === $route.fullPath ? 'text-[#dc2626]' : 'text-gray-800'"
+              >
+                {{ onEllipsisString(store.profile.employee_name, 17) }}
+              </div>
+
+              <div class="font-normal text-12px text-gray-500">
+                {{ OnNormalizePhoneNumber(store.profile.employee_contact_phone) }}
+              </div>
+              <div class="font-normal text-12px text-gray-500">
+                {{ onEllipsisString(store.profile.employee_email, 20) }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -74,5 +138,24 @@ const onClick = (path) => {
         />
       </svg>
     </button>
+    <v-dialog v-model="dialogLogout" max-width="400" transition="dialog-bottom-transition" class="font-poppins">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn v-bind="activatorProps"> Open dialogLogout </v-btn>
+      </template>
+
+      <v-card
+        prepend-icon="mdi-exit-to-app"
+        text="Pastikan semuanya sudah selesai sebelum keluar."
+        title="Yakin Ingin Keluar?"
+      >
+        <template v-slot:actions>
+          <v-spacer></v-spacer>
+
+          <v-btn @click="dialogLogout = false"> Tidak </v-btn>
+
+          <v-btn @click="onLogout()"> Ya </v-btn>
+        </template>
+      </v-card>
+    </v-dialog>
   </div>
 </template>

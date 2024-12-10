@@ -6,6 +6,7 @@ import Dashboard from "../views/dashboard/index.vue";
 import Certification from "../views/certification/index.vue";
 import Feedback from "../views/feedback/index.vue";
 import Training from "../views/training/index.vue";
+import Profile from "../views/profile/index.vue";
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/firebase';
 
@@ -32,21 +33,32 @@ const router = createRouter({
           path: '/dashboard',
           name: 'dashboard',
           component: Dashboard,
+          showOnSidebar: true
+
         },
         {
           path: '/training',
           name: 'training',
           component: Training,
+          showOnSidebar: true
         },
         {
           path: '/certification',
           name: 'certification',
           component: Certification,
+          showOnSidebar: true
         },
         {
           path: '/feedback',
           name: 'feedback',
           component: Feedback,
+          showOnSidebar: true
+        },
+        {
+          path: '/profile',
+          name: 'profile',
+          component: Profile,
+          showOnSidebar: false
         }
       ]
     },
