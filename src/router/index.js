@@ -5,7 +5,7 @@ import Layout from "../views/Layout.vue";
 import Dashboard from "../views/dashboard/index.vue";
 import Certification from "../views/certification/index.vue";
 import Feedback from "../views/feedback/index.vue";
-import Training from "../views/training/index.vue";
+import Course from "../views/course/index.vue";
 import Profile from "../views/profile/index.vue";
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/firebase';
@@ -37,9 +37,9 @@ const router = createRouter({
 
         },
         {
-          path: '/training',
-          name: 'training',
-          component: Training,
+          path: '/course',
+          name: 'course',
+          component: Course,
           showOnSidebar: true
         },
         {

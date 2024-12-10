@@ -36,14 +36,14 @@ const store = useProfileStore()
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-md:max-w-md mx-auto">
         <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all">
           <div class="p-6">
-            <h3 class="text-gray-800 text-xl font-semibold mb-3">Training</h3>
+            <h3 class="text-gray-800 text-xl font-semibold mb-3">Course</h3>
             <p class="text-gray-500 text-sm leading-relaxed">
               Ready to dive in? Let’s get started and unlock the knowledge that will help you excel
               in your career. You’ve got this!
             </p>
             <div class="mt-12"></div>
             <button
-              @click="$router.push('/training')"
+              @click="$router.push('/course')"
               type="button"
               class="px-6 py-2 mt-8 rounded text-white text-sm tracking-wider font-medium outline-none border-2 border-red-600 bg-red-600 hover:text-black transition-all duration-300"
             >

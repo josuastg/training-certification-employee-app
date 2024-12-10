@@ -145,9 +145,6 @@ const OnNormalizePhoneNumber = (phoneNumber) => {
       transition="dialog-bottom-transition"
       class="font-poppins"
     >
-      <template v-slot:activator="{ props: activatorProps }">
-        <v-btn v-bind="activatorProps"> Open dialogLogout </v-btn>
-      </template>
 
       <v-card
         prepend-icon="mdi-exit-to-app"
