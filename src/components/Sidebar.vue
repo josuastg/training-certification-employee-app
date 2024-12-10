@@ -5,7 +5,6 @@ import router from '@/router'
 import { computed } from 'vue'
 import { signOut } from 'firebase/auth'
 import { auth } from '@/firebase'
-
 async function onLogout() {
   await signOut(auth)
   router.push('/')
@@ -18,9 +17,6 @@ const routes = computed(() => {
     },
   ]
 })
-const isActive = (name) => {
-  return router.options.routes[2].children.currentRoute.includes(name)
-}
 
 const onClick = (path) => {
   router.push(path)
@@ -38,55 +34,26 @@ const onClick = (path) => {
         </div>
 
         <div class="py-6 px-4">
-          <ul class="space-y-2">
-            <li v-for="route in routes" :key="route">
-              <a
-                @click="route.name === 'logout' ? onLogout() : onClick(route.path)"
-                href="javascript:void(0)"
-                :class="`menu-item ${
-                  route.path === $route.fullPath ? ' bg-[#F8E9E9] text-[#cd4425] ' : 'text-gray-800'
-                }text-sm flex items-center cursor-pointer hover:bg-[#F8E9E9] hover:text-[#cd4425] rounded-md px-3 py-3 transition-all duration-300`"
-              >
-                <SidebarIcon :iconName="route.name" />
-                <span :class="route.path === $route.fullPath ? 'font-bold' : ''">{{
-                  route.name?.toUpperCase()
-                }}</span>
-              </a>
-            </li>
-            <!-- <li>
-              <a
-                href="javascript:void(0)"
-                class="menu-item text-gray-800 text-sm flex items-center cursor-pointer hover:bg-[#F8E9E9] rounded-md px-3 py-3 transition-all duration-300"
-              >
-                <span>Training</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="javascript:void(0)"
-                class="menu-item text-gray-800 text-sm flex items-center cursor-pointer hover:bg-[#F8E9E9] rounded-md px-3 py-3 transition-all duration-300"
-              >
-                <span>Certification</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="javascript:void(0)"
-                class="menu-item text-gray-800 text-sm flex items-center cursor-pointer hover:bg-[#F8E9E9] rounded-md px-3 py-3 transition-all duration-300"
-              >
-                <span>Feedback</span>
-              </a>
-            </li>
-            <li>
-              <a
-                @click="onLogout"
-                href="javascript:void(0)"
-                class="menu-item text-gray-800 text-sm flex items-center cursor-pointer hover:bg-[#F8E9E9] rounded-md px-3 py-3 transition-all duration-300"
-              >
-                <span> &nbsp; Logout</span>
-              </a>
-            </li> -->
-          </ul>
+          <div>
+            <ul class="space-y-2">
+              <li v-for="route in routes" :key="route">
+                <a
+                  @click="route.name === 'logout' ? onLogout() : onClick(route.path)"
+                  href="javascript:void(0)"
+                  :class="`menu-item ${
+                    route.path === $route.fullPath
+                      ? ' text-[#dc2626] bg-[#F8E9E9] '
+                      : 'text-gray-800'
+                  }text-sm flex items-center cursor-pointer hover:bg-[#F8E9E9] hover:text-[#dc2626] rounded-md px-3 py-3 transition-all duration-300`"
+                >
+                  <SidebarIcon :iconName="route.name" />
+                  <span :class="route.path === $route.fullPath ? 'font-bold' : ''">{{
+                    route.name?.toUpperCase()
+                  }}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </nav>
