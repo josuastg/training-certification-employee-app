@@ -1,6 +1,13 @@
 <script setup>
 import { ref } from 'vue'
 import MyIcon from '@/components/icon/index.vue'
+import generatePDF from './pdf/index'
+import { useLoading } from 'vue-loading-overlay'
+import { useProfileStore } from '@/stores/profile'
+const $loading = useLoading({
+  color: '#dc2626',
+})
+const store = useProfileStore()
 
 const certifications = ref([
   {
@@ -90,8 +97,10 @@ const certifications = ref([
   },
 ])
 
-const onPrintPDF = (item) => {
-  console.log('print', item)
+const onPrintPDF = async (item) => {
+  const loader = $loading.show()
+  generatePDF({ ...item, employee_name: store.profile.employee_name })
+  loader.hide()
 }
 </script>
 <template>
