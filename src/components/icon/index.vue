@@ -5,6 +5,7 @@ import profile from './profile.vue'
 import course from './course.vue'
 import feedback from './feedback.vue'
 import logout from './logout.vue'
+import emptyData from './noData.vue'
 
 const props = defineProps({
   iconName: {
@@ -20,4 +21,5 @@ const props = defineProps({
   <course v-else-if="iconName === 'course'" />
   <feedback v-else-if="iconName === 'feedback'" />
   <logout v-else-if="iconName === 'logout'" />
+  <emptyData v-else-if="iconName === 'emptyData'" />
 </template>

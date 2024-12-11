@@ -1,6 +1,6 @@
 <script setup>
 import BasedLogo from '@/components/BasedLogo.vue'
-import SidebarIcon from '@/components/sidebar-icon/index.vue'
+import MyIcon from '@/components/icon/index.vue'
 import router from '@/router'
 import { computed, ref } from 'vue'
 import { signOut } from 'firebase/auth'
@@ -59,7 +59,7 @@ const OnNormalizePhoneNumber = (phoneNumber) => {
                       : 'text-gray-800'
                   }text-sm flex items-center cursor-pointer hover:bg-[#F8E9E9] hover:text-[#dc2626] rounded-md px-3 py-3 transition-all duration-300`"
                 >
-                  <SidebarIcon :iconName="route.name" />
+                  <MyIcon :iconName="route.name" />
                   <span :class="route.path === $route.fullPath ? 'font-bold' : ''">{{
                     route.name?.toUpperCase()
                   }}</span>
@@ -79,7 +79,7 @@ const OnNormalizePhoneNumber = (phoneNumber) => {
                 @click="dialogLogout = true"
                 class="menu-item text-gray-800 text-sm flex items-center cursor-pointer hover:bg-[#F8E9E9] hover:text-[#dc2626] rounded-md px-3 py-3"
               >
-                <SidebarIcon iconName="logout" />
+                <MyIcon iconName="logout" />
                 <span>LOGOUT</span>
               </a>
             </li>
