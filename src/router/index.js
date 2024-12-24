@@ -43,15 +43,15 @@ const router = createRouter({
           showOnSidebar: true
         },
         {
-          path: '/certification',
-          name: 'certification',
-          component: Certification,
-          showOnSidebar: true
-        },
-        {
           path: '/feedback',
           name: 'feedback',
           component: Feedback,
+          showOnSidebar: true
+        },
+        {
+          path: '/certification',
+          name: 'certification',
+          component: Certification,
           showOnSidebar: true
         },
         {
