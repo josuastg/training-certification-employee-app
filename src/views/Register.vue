@@ -2,7 +2,7 @@
 import { auth, db } from '@/firebase'
 import router from '@/router'
 import { createUserWithEmailAndPassword, signOut } from 'firebase/auth'
-import { doc, setDoc } from 'firebase/firestore'
+import { collection, doc, setDoc } from 'firebase/firestore'
 import { computed, reactive, ref } from 'vue'
 import { useLoading } from 'vue-loading-overlay'
 import { toast } from 'vue3-toastify'
@@ -21,6 +21,7 @@ const form = reactive({
   employee_contact_phone: '',
   employee_email: '',
   gender: '',
+  role_name: 'employee',
 })
 function showPassword() {
   if (passwordType.value === 'password' && iconType.value === 'eye-slash') {
@@ -78,6 +79,9 @@ async function registerEmployee() {
       )
       // Get the registered user's unique ID
       const userId = userCredential.user.uid
+
+      const roleRef = doc(collection(db, 'roles'))
+      await setDoc(roleRef, { role_name: form.role_name })
       // Save additional user info to Firestore
       if (userId) {
         await setDoc(doc(db, 'employee', userId), {
@@ -86,6 +90,7 @@ async function registerEmployee() {
           employee_contact_phone: form.employee_contact_phone.toString(),
           employee_email: form.employee_email,
           gender: form.gender,
+          role_id: roleRef.id,
         })
         // Redirect to login after successful registration
         router.push('/')
