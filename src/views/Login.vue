@@ -5,6 +5,7 @@ import { getAuth } from 'firebase/auth'
 import router from '@/router'
 import { useLoading } from 'vue-loading-overlay'
 import { toast } from 'vue3-toastify'
+import { useProfileStore } from '@/stores/profile'
 const $loading = useLoading({
   color: '#dc2626',
 })
@@ -13,11 +14,18 @@ const auth = getAuth() // only exists on client side
 const error = ref(null)
 const email = ref('')
 const password = ref('')
+const store = useProfileStore()
+
 function signIn() {
   const loader = $loading.show()
   signInWithEmailAndPassword(auth, email.value, password.value)
     .then((userCredential) => {
-      router.push('/dashboard')
+      store.fetchProfile(userCredential.user.uid)
+      if (store.profile.role_name === 'employee') {
+        router.push('/dashboard')
+      } else {
+        router.push('/course')
+      }
     })
     .catch((reason) => {
       if (reason.code === 'auth/invalid-email') {

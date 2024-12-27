@@ -14,12 +14,17 @@ import 'vue3-toastify/dist/index.css';
 import 'vuetify/styles'
 import '@mdi/font/css/materialdesignicons.css'
 import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
+import * as allComponent from 'vuetify/components'
+import * as labsComponents from 'vuetify/labs/components'
 import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import Datepicker from 'vuejs3-datepicker';
 import "./assets/fonts/index";
 const vuetify = createVuetify({
-    components,
+    components: {
+        ...allComponent,
+        ...labsComponents
+    },
     directives,
     icons: {
         defaultSet: 'mdi',
@@ -37,6 +42,6 @@ app.use(LoadingPlugin);
 app.use(Vue3Toastify, {
     autoClose: 3000,
 });
-
-app.component('v-select', vSelect)
+app.component('Datepicker', Datepicker)
+app.component('v-select-secondary', vSelect)
 app.mount('#app')

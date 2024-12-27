@@ -48,17 +48,19 @@ const initial = computed(() => {
 
         <v-card-text class="bg-gray-50 pt-4 flex flex-row">
           <div class="w-1/3 text-16px font-medium">
-            ID Karyawan<br />
+            ID Pengguna<br />
             Email <br />
             Nomor Telepon <br />
-            Jenis Kelamin
+            Jenis Kelamin <br />
+            Tipe Pengguna
           </div>
-          <div class="max-w-max text-16px">:<br />: <br />: <br />:</div>
+          <div class="max-w-max text-16px">:<br />: <br />: <br />:<br />:</div>
           <div class="ml-4 text-16px">
             <span> {{ store.profile.employee_id }}</span> <br />
             <span> {{ store.profile.employee_email }}</span> <br />
             <span> {{ store.profile.employee_contact_phone }}</span> <br />
-            <span> {{ store.profile.gender }}</span>
+            <span> {{ store.profile.gender }} <br /></span>
+            <span> {{ store.profile.role_name }}</span>
           </div>
         </v-card-text>
       </v-card>

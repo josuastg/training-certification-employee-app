@@ -10,6 +10,7 @@ export const useProfileStore = defineStore('profile', () => {
         employee_email: '',
         employee_contact_phone: '',
         employee_name: '',
+        role_name: '',
     })
     const $loading = useLoading({
         color: '#dc2626',
@@ -28,6 +29,7 @@ export const useProfileStore = defineStore('profile', () => {
                 employee_email: '',
                 employee_contact_phone: '',
                 employee_name: '',
+                role_name: '',
             }
             toast('Terjadi error saat get profile!!!', {
                 theme: 'colored',

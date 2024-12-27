@@ -310,12 +310,12 @@ async function registerEmployee() {
             <div>
               <label class="text-gray-800 text-sm mb-2 block">Jenis Kelamin</label>
               <div class="relative flex items-center">
-                <v-select
+                <v-select-secondary
                   v-model="form.gender"
                   :options="['Pria', 'Wanita']"
                   class="w-full"
                   placeholder="Pilih jenis kelamin anda"
-                ></v-select>
+                ></v-select-secondary>
               </div>
             </div>
 

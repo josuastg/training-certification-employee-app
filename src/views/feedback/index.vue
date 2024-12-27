@@ -1,6 +1,7 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import MyIcon from '@/components/icon/index.vue'
+import FeedbackService from '@/service/feedback'
 
 const feedbacks = ref([
   {
@@ -33,9 +34,6 @@ const feedbacks = ref([
   },
 ])
 
-const onPrintPDF = (item) => {
-  console.log('print', item)
-}
 </script>
 <template>
   <div class="font-poppins">

@@ -9,6 +9,7 @@ import { useProfileStore } from '@/stores/profile'
 import initialName from '@/misc/InitialName'
 import ellipsisString from '@/misc/EllipsisString'
 import normalizePhoneNumber from '@/misc/NormalizePhoneNumber'
+import feedback from '@/service/feedback'
 
 const store = useProfileStore()
 const dialogLogout = ref(false)
@@ -17,7 +18,15 @@ async function onLogout() {
   router.push('/')
 }
 const routes = computed(() => {
-  return [...router.options.routes[2].children]
+  let resp = [...router.options.routes[2].children]
+
+  const filterAllEnable = resp.filter((key) => key.permission === 'all_enable')
+  if (store.profile.role_name === 'employee') {
+    resp = [resp[0], ...filterAllEnable]
+  } else {
+    resp = filterAllEnable
+  }
+  return resp
 })
 
 const onClick = (path) => {
@@ -54,15 +63,16 @@ const OnNormalizePhoneNumber = (phoneNumber) => {
                   v-if="route.showOnSidebar"
                   @click="onClick(route.path)"
                   :class="`menu-item ${
-                    route.path === $route.fullPath
+                    route.path.includes($route.fullPath.split('/')[1])
                       ? ' text-[#dc2626] bg-[#F8E9E9] '
                       : 'text-gray-800'
                   }text-sm flex items-center cursor-pointer hover:bg-[#F8E9E9] hover:text-[#dc2626] rounded-md px-3 py-3 transition-all duration-300`"
                 >
                   <MyIcon :iconName="route.name" />
-                  <span :class="route.path === $route.fullPath ? 'font-bold' : ''">{{
-                    route.name?.toUpperCase()
-                  }}</span>
+                  <span
+                    :class="route.path.includes($route.fullPath.split('/')[1]) ? 'font-bold' : ''"
+                    >{{ route.name?.toUpperCase() }}</span
+                  >
                 </a>
               </li>
             </ul>
@@ -145,7 +155,6 @@ const OnNormalizePhoneNumber = (phoneNumber) => {
       transition="dialog-bottom-transition"
       class="font-poppins"
     >
-
       <v-card
         prepend-icon="mdi-exit-to-app"
         text="Pastikan semuanya sudah selesai sebelum keluar."
