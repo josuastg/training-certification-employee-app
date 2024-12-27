@@ -1,6 +1,5 @@
 <script setup>
 import router from '@/router'
-import InputText from 'primevue/inputtext'
 import { ref } from 'vue'
 let form = ref({
   course_name: '',
