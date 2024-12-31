@@ -1,5 +1,6 @@
 import { db } from "@/firebase";
 import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+// import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 class CourseService {
 
@@ -25,6 +26,18 @@ class CourseService {
             // Use the auto-generated ID as the course_id
             await updateDoc(doc(db, "courses", docRef.id), { course_id: docRef.id });
             return docRef.id;
+        } catch (err) {
+            console.error("Error adding course:", err);
+            throw err;
+        }
+    }
+
+
+    async updateCourse(courseId, courseImage, courseFile) {
+        try {
+            // Use the auto-generated ID as the course_id
+            await updateDoc(doc(db, "courses", courseId), { image_url: courseImage, course_file: courseFile });
+            return true;
         } catch (err) {
             console.error("Error adding course:", err);
             throw err;

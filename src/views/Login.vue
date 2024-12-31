@@ -20,12 +20,7 @@ function signIn() {
   const loader = $loading.show()
   signInWithEmailAndPassword(auth, email.value, password.value)
     .then((userCredential) => {
-      store.fetchProfile(userCredential.user.uid)
-      if (store.profile.role_name === 'employee') {
-        router.push('/dashboard')
-      } else {
-        router.push('/course')
-      }
+      store.fetchProfile(userCredential.user.uid, true)
     })
     .catch((reason) => {
       if (reason.code === 'auth/invalid-email') {

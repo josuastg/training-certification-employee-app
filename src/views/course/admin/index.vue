@@ -6,7 +6,6 @@ import { useProfileStore } from '@/stores/profile'
 import CourseService from '@/service/course'
 import { toast } from 'vue3-toastify'
 import ellipsisString from '@/misc/EllipsisString'
-
 const $loading = useLoading({
   color: '#dc2626',
 })

@@ -3,6 +3,7 @@ import { useLoading } from 'vue-loading-overlay'
 import { toast } from 'vue3-toastify'
 import getUserProfile from '@/service/profile'
 import { ref } from 'vue'
+import router from '@/router'
 export const useProfileStore = defineStore('profile', () => {
     let profile = ref({
         gender: '',
@@ -17,11 +18,18 @@ export const useProfileStore = defineStore('profile', () => {
     })
     let isLoadingProfile = ref(false);
 
-    async function fetchProfile(userId) {
+    async function fetchProfile(userId, isFromLogin = false) {
         const loader = $loading.show()
         isLoadingProfile.value = true
         try {
             profile.value = await getUserProfile(userId)
+            if (isFromLogin) {
+                if (profile.value.role_name === 'employee') {
+                    router.push('/dashboard')
+                } else {
+                    router.push('/course')
+                }
+            }
         } catch (err) {
             profile.value = {
                 gender: '',
