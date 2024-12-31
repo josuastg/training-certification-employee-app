@@ -6,8 +6,6 @@ import { toast } from 'vue3-toastify'
 import { useLoading } from 'vue-loading-overlay'
 import axios from 'axios'
 import {
-  pinataApiKey,
-  pinataSecretApiKey,
   baseUrlPinataCloud,
   baseUrlPinataGateway,
 } from '@/misc/Constant.js'
@@ -58,8 +56,8 @@ const uploadFile = async (courseId = '', type = '', file) => {
     const response = await axios.post(`${baseUrlPinataCloud}/pinning/pinFileToIPFS`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        pinata_api_key: pinataApiKey,
-        pinata_secret_api_key: pinataSecretApiKey,
+        pinata_api_key: import.meta.env.VITE_APP_PINATA_API_KEY,
+        pinata_secret_api_key: import.meta.env.VITE_APP_PINATA_SECRET_API_KEY,
       },
     })
     ipfsLink.value = `${baseUrlPinataGateway}/${response.data.IpfsHash}`
