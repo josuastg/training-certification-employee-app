@@ -155,7 +155,7 @@ onBeforeMount(() => {
           />
           <p class="text-black text-lg font-medium">Periode Pelatihan</p>
           <p class="text-gray-500 text-base leading-relaxed text-justify">
-            {{ formatDate(detailCourse.start_date) }} - {{ formatDate(detailCourse.end_date) }}
+            {{ detailCourse.start_date }} s/d {{ detailCourse.end_date }}
           </p>
           <p class="text-black text-lg font-medium">Deskripsi Pelatihan</p>
           <p
@@ -169,9 +169,9 @@ onBeforeMount(() => {
           <p
             v-if="detailCourse.course_file"
             @click="onOpenFile(detailCourse.course_file)"
-            class="text-blue-500 text-base leading-relaxed text-justify cursor-pointer underline"
+            class="text-blue-500 lowercase text-base leading-relaxed text-justify cursor-pointer underline"
           >
-            {{ detailCourse.course_file }}
+            soal_{{ detailCourse.course_name }}.pdf
           </p>
         </div>
       </div>

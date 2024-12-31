@@ -123,7 +123,7 @@ const onSaveCourse = async () => {
           onResetState()
           setTimeout(() => {
             router.push('/course')
-          }, 2000)
+          }, 1000)
         }
       }
     }
@@ -176,7 +176,12 @@ const isFormValid = computed(() => {
       <div class="p-6">
         <div class="flex flex-row justify-between">
           <div class="flex flex-row gap-x-1 items-center">
-            <v-btn color="#dc2626" icon="mdi-arrow-left" variant="text" @click="router.back()"></v-btn>
+            <v-btn
+              color="#dc2626"
+              icon="mdi-arrow-left"
+              variant="text"
+              @click="router.back()"
+            ></v-btn>
             <h3 class="text-gray-800 text-xl font-semibold mb-2">Buat Pelatihan</h3>
           </div>
           <div>
