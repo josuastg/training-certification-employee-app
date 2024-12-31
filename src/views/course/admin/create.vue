@@ -5,10 +5,7 @@ import CourseService from '@/service/course'
 import { toast } from 'vue3-toastify'
 import { useLoading } from 'vue-loading-overlay'
 import axios from 'axios'
-import {
-  baseUrlPinataCloud,
-  baseUrlPinataGateway,
-} from '@/misc/Constant.js'
+import { baseUrlPinataCloud, baseUrlPinataGateway } from '@/misc/Constant.js'
 import formatDate from '@/misc/FormatDate'
 
 const $loading = useLoading({
@@ -92,6 +89,7 @@ const onSaveCourse = async () => {
       status: form.value.status,
       image_url: '',
       course_file: '',
+      created_at: new Date(),
     })
     if (courseId) {
       for (let index = 0; index < data.length; index++) {
@@ -123,6 +121,9 @@ const onSaveCourse = async () => {
             dangerouslyHTMLString: true,
           })
           onResetState()
+          setTimeout(() => {
+            router.push('/course')
+          }, 2000)
         }
       }
     }
@@ -174,11 +175,9 @@ const isFormValid = computed(() => {
     <div class="bg-white rounded-2xl h-screen mb-4 overflow-hidden shadow-md font-poppins">
       <div class="p-6">
         <div class="flex flex-row justify-between">
-          <div class="flex flex-col">
+          <div class="flex flex-row gap-x-1 items-center">
+            <v-btn color="#dc2626" icon="mdi-arrow-left" variant="text" @click="router.back()"></v-btn>
             <h3 class="text-gray-800 text-xl font-semibold mb-2">Buat Pelatihan</h3>
-            <p class="text-gray-500 text-lg leading-relaxed">
-              Isi form dibawah ini dengan lengkap!
-            </p>
           </div>
           <div>
             <button
@@ -195,6 +194,7 @@ const isFormValid = computed(() => {
             </button>
           </div>
         </div>
+        <p class="text-gray-500 text-lg leading-relaxed">Isi form dibawah ini dengan lengkap!</p>
 
         <div class="flex flex-row gap-x-4">
           <div class="mt-7 gap-y-2 flex flex-col w-1/2">

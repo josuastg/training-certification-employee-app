@@ -7,6 +7,7 @@ import Certification from "../views/certification/index.vue";
 import Feedback from "../views/feedback/index.vue";
 import Course from "../views/course/index.vue";
 import CreateCourse from "../views/course/admin/create.vue";
+import DetailCourse from "../views/course/admin/detail.vue";
 import Profile from "../views/profile/index.vue";
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/firebase';
@@ -36,7 +37,6 @@ const router = createRouter({
           component: Dashboard,
           showOnSidebar: true,
           permission: 'employee'
-
         },
         {
           path: '/course',
@@ -71,7 +71,14 @@ const router = createRouter({
           name: 'create-course',
           showOnSidebar: false,
           component: CreateCourse,
-          permission: 'all_enable' 
+          permission: 'all_enable'
+        },
+        {
+          path: '/course/detail/:id',
+          name: 'detail-course',
+          showOnSidebar: false,
+          component: DetailCourse,
+          permission: 'all_enable'
         }
       ]
     },

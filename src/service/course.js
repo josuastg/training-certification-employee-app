@@ -1,16 +1,20 @@
 import { db } from "@/firebase";
-import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
-// import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
 
 class CourseService {
 
     async fetchCourses() {
         try {
-            const coursesSnapshot = await getDocs(collection(db, "courses"));
+            // Create a query to order courses by created_at in descending order
+            const coursesQuery = query(collection(db, "courses"), orderBy("created_at", "desc"));
+            const coursesSnapshot = await getDocs(coursesQuery);
             const courses = [];
+
+            // Process the snapshot to extract course data
             coursesSnapshot.forEach((doc) => {
                 courses.push({ course_id: doc.id, ...doc.data() });
             });
+
             return courses;
         } catch (err) {
             console.error("Error fetching courses:", err);
@@ -44,22 +48,61 @@ class CourseService {
         }
     }
 
+    async updateStatusCourse(courseId, status) {
+        try {
+            // Use the auto-generated ID as the course_id
+            await updateDoc(doc(db, "courses", courseId), { status });
+            return true;
+        } catch (err) {
+            console.error("Error adding course:", err);
+            throw err;
+        }
+    }
+
     async fetchCoursesByProperty(key, value) {
         try {
-            // Query the courses collection where the status matches the given status
-            const q = query(collection(db, "courses"), where(`${key}`, "==", value));
+            const q = query(
+                collection(db, "courses"),
+                where(key, "==", value),
+                orderBy("created_at", "desc")
+            );
+
             const snapshot = await getDocs(q);
 
             // Map the documents into an array of course objects
             const courses = [];
             snapshot.forEach((doc) => {
-                courses.push({ ...doc.data() });
+                courses.push({ course_id: doc.id, ...doc.data() });
             });
 
             return courses;
         } catch (err) {
             console.error("Error fetching courses by status:", err);
             throw err;
+        }
+    }
+
+    async deleteCourseById(courseId) {
+        try {
+            // Find the course document with the matching course_id
+            const coursesRef = collection(db, "courses");
+            const q = query(coursesRef, where("course_id", "==", courseId));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                querySnapshot.forEach(async (docSnapshot) => {
+                    // Delete the course document
+                    await deleteDoc(doc(db, "courses", docSnapshot.id));
+                });
+
+                return { success: true, message: "Course deleted successfully." };
+            } else {
+                console.error(`No course found with ID ${courseId}.`);
+                return { success: false, message: "Course not found." };
+            }
+        } catch (error) {
+            console.error("Error deleting course:", error);
+            return { success: false, message: error.message };
         }
     }
 }
