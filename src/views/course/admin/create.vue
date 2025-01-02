@@ -28,7 +28,7 @@ const isLoading = ref(false)
 
 let dialog = ref(false)
 
-let rules = [(v) => v.length <= 500 || 'Maksimal 500 karakter']
+let rules = [(v) => v.length <= 5000 || 'Maksimal 5000 karakter']
 
 const onUploadFile = async (file) => {
   if (!file) return
@@ -84,8 +84,8 @@ const onSaveCourse = async () => {
     const courseId = await CourseService.addCourse({
       course_name: form.value.course_name,
       description_course: form.value.description_course,
-      start_date: formatDate(form.value.start_date, 'DD-MM-YYYY'),
-      end_date: formatDate(form.value.end_date, 'DD-MM-YYYY'),
+      start_date: formatDate(form.value.start_date, 'YYYY-MM-DD'),
+      end_date: formatDate(form.value.end_date, 'YYYY-MM-DD'),
       status: form.value.status,
       image_url: '',
       course_file: '',
@@ -105,11 +105,10 @@ const onSaveCourse = async () => {
           transition: 'bounce',
           dangerouslyHTMLString: true,
         })
-        const result = await CourseService.updateCourse(
-          courseId,
-          fileResult.value[0],
-          fileResult.value[1]
-        )
+        const result = await CourseService.updateCourse(courseId, {
+          image_url: fileResult.value[0],
+          course_file: fileResult.value[1],
+        })
         if (result) {
           toast('Berhasil tambah pelatihan!!!', {
             theme: 'colored',

@@ -37,13 +37,13 @@ class CourseService {
     }
 
 
-    async updateCourse(courseId, courseImage, courseFile) {
+    async updateCourse(courseId, payload) {
         try {
             // Use the auto-generated ID as the course_id
-            await updateDoc(doc(db, "courses", courseId), { image_url: courseImage, course_file: courseFile });
+            await updateDoc(doc(db, "courses", courseId), { ...payload });
             return true;
         } catch (err) {
-            console.error("Error adding course:", err);
+            console.error("Error update course:", err);
             throw err;
         }
     }

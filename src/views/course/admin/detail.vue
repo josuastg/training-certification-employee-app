@@ -13,6 +13,48 @@ const detailCourse = ref(null)
 const $loading = useLoading({
   color: '#dc2626',
 })
+let showEditCourseName = ref(false)
+let showEditDesc = ref(false)
+
+let isChangeValue = ref(false)
+
+const onChangeValue = () => {
+  isChangeValue.value = true
+}
+
+const onEditCourse = async () => {
+  try {
+    const update = await CourseService.updateCourse(route.params.id, {
+      course_name: detailCourse.value.course_name,
+      description_course: detailCourse.value.description_course,
+    })
+    if (update) {
+      fetchDetailCourse('course_id', route.params.id)
+      toast('Berhasil ubah informasi course!!!', {
+        theme: 'colored',
+        type: 'success',
+        position: 'top-center',
+        closeOnClick: true,
+        hideProgressBar: true,
+        transition: 'bounce',
+        dangerouslyHTMLString: true,
+      })
+      isChangeValue.value = false
+      showEditCourseName.value = false
+      showEditDesc.value = false
+    }
+  } catch (error) {
+    toast('Terjadi error saat ubah informasi course!!!', {
+      theme: 'colored',
+      type: 'error',
+      position: 'top-center',
+      closeOnClick: true,
+      hideProgressBar: true,
+      transition: 'bounce',
+      dangerouslyHTMLString: true,
+    })
+  }
+}
 const route = useRoute()
 async function fetchDetailCourse(key, value) {
   isLoadingDetail.value = true
@@ -46,6 +88,8 @@ async function fetchDetailCourse(key, value) {
     loader.hide()
   }
 }
+
+let rules = [(v) => v.length <= 5000 || 'Maksimal 5000 karakter']
 
 const onUpdateStatus = async () => {
   dialog.value = false
@@ -131,8 +175,17 @@ onBeforeMount(() => {
             ></v-btn>
             <h3 class="text-gray-800 text-xl font-semibold">Detail Pelatihan</h3>
           </div>
-          <div>
+          <div class="flex flex-row items-center gap-x-2">
             <button
+              v-if="isChangeValue"
+              @click="onEditCourse"
+              type="button"
+              class="px-8 py-3 rounded text-white text-sm tracking-wider font-medium outline-none border-2 border-red-600 bg-red-600"
+            >
+              Ubah Pelatihan
+            </button>
+            <button
+              v-else
               @click="dialog = true"
               type="button"
               class="px-8 py-3 rounded text-white text-sm tracking-wider font-medium outline-none border-2 border-red-600 bg-red-600"
@@ -142,10 +195,32 @@ onBeforeMount(() => {
           </div>
         </div>
         <div class="flex flex-col gap-y-1.5 mt-6">
-          <p class="text-black text-lg font-medium">Nama Pelatihan</p>
-          <p class="text-gray-500 text-base leading-relaxed text-justify">
-            {{ detailCourse.course_name }}
-          </p>
+          <div class="flex flex-row items-center gap-x-1">
+            <div class="flex flex-col w-full">
+              <div class="flex flex-row items-center">
+                <p class="text-black text-lg font-medium">Nama Pelatihan</p>
+                <v-btn
+                  color="#dc2626"
+                  icon="mdi-pencil-box"
+                  variant="text"
+                  @click="showEditCourseName = !showEditCourseName"
+                ></v-btn>
+              </div>
+              <p
+                v-if="!showEditCourseName"
+                class="text-gray-500 text-base leading-relaxed text-justify"
+              >
+                {{ detailCourse.course_name }}
+              </p>
+              <v-text-field
+                v-else
+                @update:modelValue="onChangeValue"
+                label="Nama Pelatihan"
+                placeholder="Isi Nama Pelatihan"
+                v-model="detailCourse.course_name"
+              ></v-text-field>
+            </div>
+          </div>
           <p class="text-black text-lg font-medium">Poster Pelatihan</p>
           <img
             id="thumbnail-course"
@@ -157,11 +232,33 @@ onBeforeMount(() => {
           <p class="text-gray-500 text-base leading-relaxed text-justify">
             {{ detailCourse.start_date }} s/d {{ detailCourse.end_date }}
           </p>
-          <p class="text-black text-lg font-medium">Deskripsi Pelatihan</p>
-          <p
-            class="text-gray-500 text-base leading-relaxed capitalize text-justify"
-            v-html="detailCourse.description_course"
-          ></p>
+          <div class="flex flex-row items-center gap-x-1 w-full">
+            <div class="flex flex-col w-full">
+              <div class="flex flex-row items-center">
+                <p class="text-black text-lg font-medium">Deskripsi Pelatihan</p>
+                <v-btn
+                  color="#dc2626"
+                  icon="mdi-pencil-box"
+                  variant="text"
+                  @click="showEditDesc = !showEditDesc"
+                ></v-btn>
+              </div>
+              <p
+                v-if="!showEditDesc"
+                class="text-gray-500 text-base leading-relaxed capitalize text-justify"
+                v-html="detailCourse.description_course"
+              ></p>
+              <v-textarea
+                v-else
+                v-model="detailCourse.description_course"
+                @update:modelValue="onChangeValue"
+                :rules="rules"
+                label="Deskripsi Pelatihan"
+                placeholder="Isi Deskripsi Pelatihan"
+                counter
+              ></v-textarea>
+            </div>
+          </div>
 
           <p class="text-black text-lg font-medium" v-if="detailCourse.course_file">
             Link Soal Pelatihan

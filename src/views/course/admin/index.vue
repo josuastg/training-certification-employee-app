@@ -6,6 +6,8 @@ import CourseService from '@/service/course'
 import { toast } from 'vue3-toastify'
 import ellipsisString from '@/misc/EllipsisString'
 import router from '@/router'
+import formatDate from '@/misc/FormatDate'
+
 const $loading = useLoading({
   color: '#dc2626',
 })
@@ -175,8 +177,8 @@ onMounted(() => {
             <td class="w-1/3" id="course_desc">
               {{ onEllipsisString(item.description_course, 100) }}
             </td>
-            <td id="startDate">{{ item.start_date }}</td>
-            <td id="endDate">{{ item.end_date }}</td>
+            <td id="startDate">{{ formatDate(item.start_date) }}</td>
+            <td id="endDate">{{ formatDate(item.end_date) }}</td>
             <td id="course_status">{{ item.status === 'active' ? 'Aktif' : 'Tidak Aktif' }}</td>
             <td id="delete_button" class="font-poppins">
               <v-btn
