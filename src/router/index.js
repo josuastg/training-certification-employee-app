@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from '../views/Login.vue'
-import Register from "../views/Register.vue";
-import Layout from "../views/Layout.vue";
+import Login from '../views/login.vue'
+import Register from "../views/register.vue";
+import Layout from "../views/layout.vue";
 import Dashboard from "../views/dashboard/index.vue";
 import Certification from "../views/certification/index.vue";
 import Feedback from "../views/feedback/index.vue";
 import Course from "../views/course/index.vue";
+import MyCourse from "../views/course/employee/myCourse.vue";
+import DetailMyCourse from "../views/course/employee/detail.vue";
 import CreateCourse from "../views/course/admin/create.vue";
 import DetailCourse from "../views/course/admin/detail.vue";
 import Profile from "../views/profile/index.vue";
@@ -79,17 +81,31 @@ const router = createRouter({
           showOnSidebar: false,
           component: DetailCourse,
           permission: 'all_enable'
-        }
+        },
+        {
+          path: '/course/my-course',
+          name: 'my-course',
+          showOnSidebar: false,
+          component: MyCourse,
+          permission: 'employee'
+        },
+        {
+          path: '/course/my-course/detail/:id',
+          name: 'detail-my-course',
+          showOnSidebar: false,
+          component: DetailMyCourse,
+          permission: 'employee'
+        },
       ]
     },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-    }
+    // {
+    // path: '/about',
+    // name: 'about',
+    // route level code-splitting
+    // this generates a separate chunk (About.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    // component: () => import('../views/AboutView.vue'),
+    // }
   ],
 })
 
