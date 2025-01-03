@@ -2,7 +2,7 @@ import { db } from "@/firebase";
 import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
 
 class TrainingEnrollmentService {
-    async joinCourse(courseId, employeeId, status = 'in_progress') {
+    async joinCourse(courseId, employeeId, status = 'IN_PROGRESS') {
         try {
 
             // Add new document
@@ -21,11 +21,17 @@ class TrainingEnrollmentService {
         }
     }
 
-    async fetchTrainingEnrollment(employeeId, status = 'in_progress') {
+    async fetchTrainingEnrollment(value, status = 'IN_PROGRESS', key = 'employee_id', isNeedStatus = true) {
         try {
             // Create a query to order courses by created_at in descending order
-            const trainingEnrollmentQuery = query(collection(db, "training_enrollment"), where("employee_id", "==", employeeId), where("training_enrollment_status", "==", status)
-                , orderBy("created_at", "desc"));
+            let trainingEnrollmentQuery = '';
+            if (isNeedStatus) {
+                trainingEnrollmentQuery = query(collection(db, "training_enrollment"), where(key, "==", value), where("training_enrollment_status", "==", status)
+                    , orderBy("created_at", "desc"));
+            } else {
+                trainingEnrollmentQuery = query(collection(db, "training_enrollment"), where(key, "==", value)
+                    , orderBy("created_at", "desc"));
+            }
             const trainingEnrollmentSnapshot = await getDocs(trainingEnrollmentQuery);
             const trainingEnrollment = [];
             for (const enrollmentDoc of trainingEnrollmentSnapshot.docs) {
@@ -47,6 +53,18 @@ class TrainingEnrollmentService {
             return trainingEnrollment;
         } catch (err) {
             console.error("Error fetching trainingEnrollment:", err);
+            throw err;
+        }
+    }
+
+
+    async updateTrainingEnrollment(enrollmentId, payload) {
+        try {
+            // Use the auto-generated ID as the course_id
+            await updateDoc(doc(db, "training_enrollment", enrollmentId), { ...payload });
+            return true;
+        } catch (err) {
+            console.error("Error update training enrollment:", err);
             throw err;
         }
     }

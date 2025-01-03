@@ -180,7 +180,7 @@ const isFormValid = computed(() => {
     <div class="bg-white rounded-2xl h-screen mb-4 overflow-hidden shadow-md font-poppins">
       <div class="p-6">
         <div class="flex flex-row justify-between">
-          <div class="flex flex-row gap-x-1 items-center">
+          <div class="flex flex-row gap-x-1 items-center text-red-600">
             <v-btn
               color="#dc2626"
               icon="mdi-arrow-left"

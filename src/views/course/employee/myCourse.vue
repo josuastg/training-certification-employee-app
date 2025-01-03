@@ -22,16 +22,16 @@ const onMappingTab = computed(() => {
   let result = ''
   switch (tab.value) {
     case 1:
-      result = 'in_progress'
+      result = 'IN_PROGRESS'
       break
     case 2:
-      result = 'submitted'
+      result = 'SUBMITTED'
       break
     case 3:
-      result = 'done'
+      result = 'DONE'
       break
     default:
-      result = 'in_progress'
+      result = 'IN_PROGRESS'
       break
   }
   return result
@@ -115,15 +115,12 @@ function onChangeTabs() {
                 </div>
                 <div class="grid grid-cols-3 w-full inset-0 gap-9 mb-5" v-else>
                   <div
-                  @click="router.push(`/course/my-course/detail/${course.training_enrollment_id}`)"
+                    @click="
+                      router.push(`/course/my-course/detail/${course.training_enrollment_id}`)
+                    "
                     v-for="course in training_enrollments"
                     :key="course"
-                    :class="`bg-white rounded-2xl overflow-hidden shadow-md ${
-                      course.training_enrollment_status === 'in_progress' ||
-                      course.training_enrollment_status === 'submitted'
-                        ? 'hover:shadow-lg cursor-pointer transition transform hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:transform-none'
-                        : 'shadow-md cursor-not-allowed opacity-50'
-                    }`"
+                    class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg cursor-pointer transition transform hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:transform-none"
                   >
                     <div class="">
                       <img
