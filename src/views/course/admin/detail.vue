@@ -15,6 +15,7 @@ const $loading = useLoading({
 })
 let showEditCourseName = ref(false)
 let showEditDesc = ref(false)
+let showEditPassingGrade = ref(false)
 
 let isChangeValue = ref(false)
 
@@ -27,6 +28,7 @@ const onEditCourse = async () => {
     const update = await CourseService.updateCourse(route.params.id, {
       course_name: detailCourse.value.course_name,
       description_course: detailCourse.value.description_course,
+      passing_grade: +detailCourse.value.passing_grade.toFixed(),
     })
     if (update) {
       fetchDetailCourse('course_id', route.params.id)
@@ -42,6 +44,7 @@ const onEditCourse = async () => {
       isChangeValue.value = false
       showEditCourseName.value = false
       showEditDesc.value = false
+      showEditPassingGrade.value = false
     }
   } catch (error) {
     toast('Terjadi error saat ubah informasi course!!!', {
@@ -73,6 +76,7 @@ async function fetchDetailCourse(key, value) {
       description_course: '',
       course_id: '',
       image_url: '',
+      passing_grade: 0,
     }
     toast('Terjadi error saat get detail course!!!', {
       theme: 'colored',
@@ -90,6 +94,7 @@ async function fetchDetailCourse(key, value) {
 }
 
 let rules = [(v) => v.length <= 5000 || 'Maksimal 5000 karakter']
+let rulesPassingGrade = [(v) => v <= 100 || 'Maksimal Passing Grade 100']
 
 const onUpdateStatus = async () => {
   dialog.value = false
@@ -179,8 +184,15 @@ onBeforeMount(() => {
             <button
               v-if="isChangeValue"
               @click="onEditCourse"
+              :disabled="
+                detailCourse.description_course.length > 5000 || detailCourse.passing_grade > 100
+              "
               type="button"
-              class="px-8 py-3 rounded text-white text-sm tracking-wider font-medium outline-none border-2 border-red-600 bg-red-600"
+              :class="`px-8 py-3 rounded text-white text-sm tracking-wider font-medium outline-none border-2 ${
+                detailCourse.description_course.length > 5000 || detailCourse.passing_grade > 100
+                  ? 'bg-gray-400 cursor-not-allowed opacity-50'
+                  : 'border-red-600 bg-red-600'
+              }`"
             >
               Ubah Pelatihan
             </button>
@@ -219,6 +231,37 @@ onBeforeMount(() => {
                 placeholder="Isi Nama Pelatihan"
                 v-model="detailCourse.course_name"
               ></v-text-field>
+            </div>
+          </div>
+          <div>
+            <div class="flex flex-row items-center gap-x-1">
+              <div class="flex flex-col w-full">
+                <div class="flex flex-row items-center">
+                  <p class="text-black text-lg font-medium">Passing Grade Pelatihan</p>
+                  <v-btn
+                    color="#dc2626"
+                    icon="mdi-pencil-box"
+                    variant="text"
+                    @click="showEditPassingGrade = !showEditPassingGrade"
+                  ></v-btn>
+                </div>
+                <p
+                  v-if="!showEditPassingGrade"
+                  class="text-gray-500 text-base leading-relaxed text-justify"
+                >
+                  {{ detailCourse.passing_grade }}
+                </p>
+                <v-number-input
+                  v-else
+                  :min="0"
+                  @update:modelValue="onChangeValue"
+                  :rules="rulesPassingGrade"
+                  v-model="detailCourse.passing_grade"
+                  label="Passing Grade Pelatihan"
+                  placeholder="Isi Passing Grade Pelatihan"
+                  :max-errors="100"
+                ></v-number-input>
+              </div>
             </div>
           </div>
           <p class="text-black text-lg font-medium">Poster Pelatihan</p>

@@ -19,6 +19,7 @@ let form = ref({
   status: '',
   image_url: null,
   course_file: null,
+  passing_grade: 0,
 })
 
 let ipfsLink = ref('')
@@ -29,6 +30,8 @@ const isLoading = ref(false)
 let dialog = ref(false)
 
 let rules = [(v) => v.length <= 5000 || 'Maksimal 5000 karakter']
+let rulesPassingGrade = [(v) => v <= 100 || 'Maksimal Passing Grade 100']
+
 
 const onUploadFile = async (file) => {
   if (!file) return
@@ -90,6 +93,7 @@ const onSaveCourse = async () => {
       image_url: '',
       course_file: '',
       created_at: new Date(),
+      passing_grade: +form.value.passing_grade.toFixed(),
     })
     if (courseId) {
       for (let index = 0; index < data.length; index++) {
@@ -151,6 +155,7 @@ const onResetState = () => {
     status: '',
     image_url: null,
     course_file: null,
+    passing_grade: 0,
   }
   fileResult.value = []
   ipfsLink = ''
@@ -158,13 +163,14 @@ const onResetState = () => {
 
 const isFormValid = computed(() => {
   return (
-    form.value.course_file &&
     form.value.description_course &&
     form.value.start_date &&
     form.value.end_date &&
     form.value.status &&
     form.value.course_file &&
-    form.value.course_file
+    form.value.image_url &&
+    (form.value.passing_grade > 0 &&
+    form.value.passing_grade <= 100)
   )
 })
 </script>
@@ -257,6 +263,14 @@ const isFormValid = computed(() => {
               </div>
             </div>
             <div class="mt-10">
+              <v-number-input
+                :min="0"
+                :rules="rulesPassingGrade"
+                v-model="form.passing_grade"
+                label="Passing Grade Pelatihan"
+                placeholder="Isi Passing Grade Pelatihan"
+                :max-errors="100"
+              ></v-number-input>
               <v-file-input
                 clearable
                 label="Unggah Poster Pelatihan"
