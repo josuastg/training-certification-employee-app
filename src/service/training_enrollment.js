@@ -21,7 +21,7 @@ class TrainingEnrollmentService {
         }
     }
 
-    async fetchTrainingEnrollment(value, status = 'IN_PROGRESS', key = 'employee_id', isNeedStatus = true) {
+    async fetchTrainingEnrollment(value, status = 'IN_PROGRESS', key = 'employee_id', isNeedStatus = true) {    
         try {
             // Create a query to order courses by created_at in descending order
             let trainingEnrollmentQuery = '';

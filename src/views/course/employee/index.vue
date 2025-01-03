@@ -143,7 +143,12 @@ async function onSetDialog(status, param, courseId = '') {
 
 async function fetchTrainingEnrollments() {
   try {
-    const resp = await TrainingEnrollmentService.fetchTrainingEnrollment(auth.currentUser.uid)
+    const resp = await TrainingEnrollmentService.fetchTrainingEnrollment(
+      auth.currentUser.uid,
+      '',
+      'employee_id',
+      false
+    )
     if (!resp.length) return { success: false, data: [] }
     else return { success: true, data: resp }
   } catch (error) {
