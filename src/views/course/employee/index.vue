@@ -73,7 +73,7 @@ const joinCourse = async (courseId, courseName) => {
       })
       setTimeout(() => {
         router.push('/course/my-course')
-      }, 2000)
+      }, 2500)
     } else {
       if (resp.success) {
         toast(`Gagal daftar pelatihan${courseName}!!!`, {

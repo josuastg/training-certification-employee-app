@@ -71,9 +71,9 @@ function onChangeTabs() {
       <div class="mb-4 flex flex-row items-center px-6 pt-0">
         <v-btn color="#dc2626" icon="mdi-arrow-left" variant="text" @click="router.back()"></v-btn>
         <div class="flex flex-col pt-6">
-          <p class="text-gray-800 text-xl font-semibold mb-1">Pelatihan yang Diikuti</p>
+          <p class="text-gray-800 text-xl font-semibold mb-1">Pelatihan Saya</p>
           <p class="text-gray-500 text-sm leading-relaxed">
-            Akses pelatihan yang sedang berlangsung dan yang telah selesai kapan saja.
+            Akses pelatihan yang sedang berjalan, telah dikirim dan yang telah selesai kapan saja.
           </p>
         </div>
       </div>
