@@ -13,10 +13,9 @@ import DetailCourse from "../views/course/admin/detail.vue";
 import Profile from "../views/profile/index.vue";
 import Submission from "../views/submission/index.vue";
 import NotFound from "../views/not-found/index.vue";
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/firebase';
-import { useProfileStore } from '@/stores/profile';
-import checkRolePermission from '@/misc/CheckRolePermission';
+import checkRolePermission from '../misc/CheckRolePermission';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
