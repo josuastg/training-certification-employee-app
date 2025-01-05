@@ -11,8 +11,12 @@ import DetailMyCourse from "../views/course/employee/detail.vue";
 import CreateCourse from "../views/course/admin/create.vue";
 import DetailCourse from "../views/course/admin/detail.vue";
 import Profile from "../views/profile/index.vue";
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import Submission from "../views/submission/index.vue";
+import NotFound from "../views/not-found/index.vue";
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/firebase';
+import { useProfileStore } from '@/stores/profile';
+import checkRolePermission from '@/misc/CheckRolePermission';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -73,14 +77,14 @@ const router = createRouter({
           name: 'create-course',
           showOnSidebar: false,
           component: CreateCourse,
-          permission: 'all_enable'
+          permission: 'admin'
         },
         {
           path: '/course/detail/:id',
           name: 'detail-course',
           showOnSidebar: false,
           component: DetailCourse,
-          permission: 'all_enable'
+          permission: 'admin'
         },
         {
           path: '/course/my-course',
@@ -95,6 +99,20 @@ const router = createRouter({
           showOnSidebar: false,
           component: DetailMyCourse,
           permission: 'employee'
+        },
+        {
+          path: '/submission',
+          name: 'submission',
+          showOnSidebar: true,
+          component: Submission,
+          permission: 'admin'
+        },
+        {
+          path: '/not-found',
+          name: 'not-found',
+          showOnSidebar: false,
+          component: NotFound,
+          permission: 'all_enable'
         },
       ]
     },
@@ -128,6 +146,54 @@ router.beforeEach((to, from, next) => {
     }
     next();
   });
-});
+  // role permission check, check if using feature flag permission, else check using role permission (old)
+
+  try {
+    const filterRoute = to.matched[0].children.filter((key) => key.name === to.name)
+    let checkRole = false;
+    if (filterRoute.length && filterRoute[0]) {
+      checkRole = checkRolePermission(filterRoute[0]?.permission)
+      if (!checkRole) {
+        next("/not-found");
+        return;
+      }
+    }
+  } catch (error) {
+    if (!checkRole) {
+      next("/not-found");
+      return;
+    }
+  }
+
+
+  // try {
+
+  //   if (to.meta.permission.forEach((item) => {
+  //     let checkPermission = false;
+  //     checkPermission = typeof item === 'string'
+
+  //   }))
+  //     if (Array.isArray(to.meta.permission)) {
+  //       let checkPermission = false;
+  //       to.meta.permission.forEach((item: any) => {
+  //         if (typeof item === "string") {
+  //           checkPermission = checkRolePermission(item) || checkPermission;
+  //         } else {
+  //           checkPermission = item.isEnabled() || checkPermission;
+  //         }
+  //       });
+  //       if (!checkPermission) {
+  //         next("/not-found");
+  //         return;
+  //       }
+  //     }
+  // } catch {
+  //   if (!checkRolePermission(to.meta.permission)) {
+  //     next("/not-found");
+  //     return;
+  //   }
+  // }
+}
+);
 
 export default router

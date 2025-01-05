@@ -273,7 +273,7 @@ onBeforeMount(() => {
           />
           <p class="text-black text-lg font-medium">Periode Pelatihan</p>
           <p class="text-gray-500 text-base leading-relaxed text-justify">
-            {{ detailCourse.start_date }} s/d {{ detailCourse.end_date }}
+            {{ formatDate(detailCourse.start_date) }} s/d {{ formatDate(detailCourse.end_date) }}
           </p>
           <div class="flex flex-row items-center gap-x-1 w-full">
             <div class="flex flex-col w-full">

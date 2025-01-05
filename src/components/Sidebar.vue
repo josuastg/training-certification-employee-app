@@ -15,17 +15,16 @@ const store = useProfileStore()
 const dialogLogout = ref(false)
 async function onLogout() {
   await signOut(auth)
+  sessionStorage.removeItem('user_role_permission');
   router.push('/')
 }
 const routes = computed(() => {
   let resp = [...router.options.routes[2].children]
 
-  const filterAllEnable = resp.filter((key) => key.permission === 'all_enable')
-  if (store.profile.role_name === 'employee') {
-    resp = [resp[0], ...filterAllEnable]
-  } else {
-    resp = filterAllEnable
-  }
+  const filterAllEnable = resp.filter(
+    (key) => key.permission === 'all_enable' || key.permission === store.profile.role_name
+  )
+  resp = filterAllEnable
   return resp
 })
 

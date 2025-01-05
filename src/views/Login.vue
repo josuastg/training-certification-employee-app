@@ -19,8 +19,9 @@ const store = useProfileStore()
 function signIn() {
   const loader = $loading.show()
   signInWithEmailAndPassword(auth, email.value, password.value)
-    .then((userCredential) => {
-      store.fetchProfile(userCredential.user.uid, true)
+    .then(async (userCredential) => {
+      await store.fetchProfile(userCredential.user.uid, true)
+      sessionStorage.setItem('user_role_permission', JSON.stringify(store.profile))
     })
     .catch((reason) => {
       if (reason.code === 'auth/invalid-email') {

@@ -5,12 +5,13 @@ import profile from './profile.vue'
 import course from './course.vue'
 import feedback from './feedback.vue'
 import logout from './logout.vue'
+import submission from './submission.vue'
 import emptyData from './noData.vue'
 
 const props = defineProps({
   iconName: {
     type: String,
-    default: 'Lanciao',
+    default: '',
   },
 })
 </script>
@@ -22,4 +23,5 @@ const props = defineProps({
   <feedback v-else-if="iconName === 'feedback'" />
   <logout v-else-if="iconName === 'logout'" />
   <emptyData v-else-if="iconName === 'emptyData'" />
+  <submission v-else-if="iconName === 'submission'" />
 </template>
