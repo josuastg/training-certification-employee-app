@@ -1,4 +1,5 @@
 import { db } from "@/firebase";
+import { getAuth } from "firebase/auth";
 import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
 
 class TrainingEnrollmentService {
@@ -21,16 +22,17 @@ class TrainingEnrollmentService {
         }
     }
 
-    async fetchTrainingEnrollment(value, status = 'IN_PROGRESS', key = 'employee_id', isNeedStatus = true) {    
+    async fetchTrainingEnrollment(value, status = 'IN_PROGRESS', key = 'employee_id', isNeedStatus = true) {
         try {
             // Create a query to order courses by created_at in descending order
             let trainingEnrollmentQuery = '';
+            const auth = getAuth();
             if (isNeedStatus) {
-                trainingEnrollmentQuery = query(collection(db, "training_enrollment"), where(key, "==", value), where("training_enrollment_status", "==", status)
-                    , orderBy("created_at", "desc"));
+                trainingEnrollmentQuery = query(collection(db, "training_enrollment"), where(key, "==", value), where("training_enrollment_status", "==", status),
+                where('employee_id', "==", auth.currentUser.uid), orderBy("created_at", "desc"));
             } else {
                 trainingEnrollmentQuery = query(collection(db, "training_enrollment"), where(key, "==", value)
-                    , orderBy("created_at", "desc"));
+                    , where('employee_id', "==", auth.currentUser.uid), orderBy("created_at", "desc"));
             }
             const trainingEnrollmentSnapshot = await getDocs(trainingEnrollmentQuery);
             const trainingEnrollment = [];

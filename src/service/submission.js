@@ -1,4 +1,5 @@
 import { db } from "@/firebase";
+import { getAuth } from "firebase/auth";
 import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 
 class SubmissionService {
@@ -25,10 +26,12 @@ class SubmissionService {
     }
 
     async fetchSubmissionByProperty(key, value) {
+        const auth = getAuth();
         try {
             const q = query(
                 collection(db, "submission"),
-                where(key, "==", value)
+                where(key, "==", value),
+                where('employee_id', "==", auth.currentUser.uid)
             );
 
             const snapshot = await getDocs(q);
