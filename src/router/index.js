@@ -148,51 +148,21 @@ router.beforeEach((to, from, next) => {
   });
   // role permission check, check if using feature flag permission, else check using role permission (old)
 
-  let checkRole = false;
   try {
     const filterRoute = to.matched[0].children.filter((key) => key.name === to.name)
     if (filterRoute.length && filterRoute[0]) {
-      checkRole = checkRolePermission(filterRoute[0]?.permission)
-      if (!checkRole) {
+      if (!checkRolePermission(filterRoute[0]?.permission)) {
         next("/not-found");
         return;
       }
     }
   } catch (error) {
-    if (!checkRole) {
+    if (!checkRolePermission(filterRoute[0]?.permission)) {
       next("/not-found");
       return;
     }
   }
 
-
-  // try {
-
-  //   if (to.meta.permission.forEach((item) => {
-  //     let checkPermission = false;
-  //     checkPermission = typeof item === 'string'
-
-  //   }))
-  //     if (Array.isArray(to.meta.permission)) {
-  //       let checkPermission = false;
-  //       to.meta.permission.forEach((item: any) => {
-  //         if (typeof item === "string") {
-  //           checkPermission = checkRolePermission(item) || checkPermission;
-  //         } else {
-  //           checkPermission = item.isEnabled() || checkPermission;
-  //         }
-  //       });
-  //       if (!checkPermission) {
-  //         next("/not-found");
-  //         return;
-  //       }
-  //     }
-  // } catch {
-  //   if (!checkRolePermission(to.meta.permission)) {
-  //     next("/not-found");
-  //     return;
-  //   }
-  // }
 }
 );
 
