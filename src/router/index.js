@@ -148,9 +148,9 @@ router.beforeEach((to, from, next) => {
   });
   // role permission check, check if using feature flag permission, else check using role permission (old)
 
+  let checkRole = false;
   try {
     const filterRoute = to.matched[0].children.filter((key) => key.name === to.name)
-    let checkRole = false;
     if (filterRoute.length && filterRoute[0]) {
       checkRole = checkRolePermission(filterRoute[0]?.permission)
       if (!checkRole) {
