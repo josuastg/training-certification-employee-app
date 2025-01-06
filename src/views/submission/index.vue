@@ -8,18 +8,7 @@ import CertificationService from '@/service/certification'
 
 import { toast } from 'vue3-toastify'
 
-const data = ref([
-  // {
-  //   course_id: '',
-  //   course_name: '',
-  //   employee_id: '',
-  //   employee_name: '',
-  //   score: '',
-  //   status: '',
-  //   submission_id: '',
-  //   submission_file: '',
-  // },
-])
+const data = ref([])
 
 const $loading = useLoading({
   color: '#dc2626',

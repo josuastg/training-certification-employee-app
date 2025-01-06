@@ -1,4 +1,5 @@
 import { db } from "@/firebase";
+import { getAuth } from "firebase/auth";
 import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 
 class CertificationService {
@@ -48,6 +49,28 @@ class CertificationService {
                 })
             }
 
+            return { result: true, resp: certification };
+        } catch (err) {
+            console.error("Error fetching certification by status:", err);
+            throw err;
+        }
+    }
+
+    async fetchDetailCertification(value) {
+        const auth = getAuth();
+        try {
+            const q = query(
+                collection(db, "certification"),
+                where('employee_id', "==", auth.currentUser.uid),
+                where('certification_name', "==", value),
+            );
+
+            const snapshot = await getDocs(q);
+            const certification = [];
+
+            snapshot.forEach((doc) => {
+                certification.push({ ...doc.data() })
+            })
             return { result: true, resp: certification };
         } catch (err) {
             console.error("Error fetching certification by status:", err);

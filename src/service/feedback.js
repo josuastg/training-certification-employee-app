@@ -1,4 +1,5 @@
 import { db } from "@/firebase";
+import { getAuth } from "firebase/auth";
 import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 
 class FeedbackService {
@@ -29,6 +30,28 @@ class FeedbackService {
                     where(key, "==", value)
                 );
             }
+
+            const snapshot = await getDocs(q);
+            const feedback = [];
+
+            snapshot.forEach((doc) => {
+                feedback.push({ ...doc.data() })
+            })
+            return { result: true, resp: feedback };
+        } catch (err) {
+            console.error("Error fetching feedback by status:", err);
+            throw err;
+        }
+    }
+
+    async fetchDetailFeedback(value) {
+        const auth = getAuth();
+        try {
+            const q = query(
+                collection(db, "feedback"),
+                where('employee_id', "==", auth.currentUser.uid),
+                where('course_id', "==", value),
+            );
 
             const snapshot = await getDocs(q);
             const feedback = [];
