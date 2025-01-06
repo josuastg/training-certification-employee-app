@@ -330,6 +330,7 @@ const submitFeedback = async () => {
       course_name: detailSubmission.value.course_name, // Reference to the course
       score: detailSubmission.value.score,
       comment: myFeedback.value,
+      comment_from_admin: detailSubmission.value.comment,
       created_at: `${new Date().toLocaleDateString(
         'id-ID',
         options

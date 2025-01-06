@@ -51,7 +51,7 @@ onBeforeMount(async () => {
         Daftar Feedback {{ store.profile.role_name === 'admin' ? 'Karyawan' : 'Anda' }}
       </p>
       <p class="text-gray-500 text-sm leading-relaxed">
-        Lihat semua umpan balik yang telah Anda terima di sini. Gunakan feedback ini untuk terus
+        Lihat semua umpan balik yang telah Anda buat di sini. Gunakan feedback ini untuk terus
         berkembang dan belajar.
       </p>
     </div>
@@ -70,14 +70,16 @@ onBeforeMount(async () => {
           <tr>
             <th class="text-left">Course Name</th>
             <th class="text-left">Result</th>
-            <th class="text-left">Comment</th>
+            <th class="text-left">Feedback From You</th>
+            <th class="text-left">Feedback From Admin</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="item in feedbacks" :key="item.name">
-            <td class="w-1/3">{{ item.course_name }}</td>
+            <td class="w-1/4">{{ item.course_name }}</td>
             <td class="w-1/8">{{ item.score }}</td>
-            <td>{{ item.comment }}</td>
+            <td class="w-1/3">{{ item.comment || '-' }}</td>
+            <td class="w-1/3">{{ item.comment_from_admin || '-' }}</td>
           </tr>
         </tbody>
       </v-table>

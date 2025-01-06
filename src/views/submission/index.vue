@@ -161,13 +161,15 @@ const onSubmit = async () => {
         { training_enrollment_status: 'DONE' }
       )
       if (updateTrainingEnrollment) {
-        await CertificationService.addCertification({
-          certification_id: '',
-          certification_name: detailSubmission.value.course_name,
-          institution_name: 'PT. Lorem Ipsum Dolo',
-          certification_date: `${new Date().toLocaleDateString('id-ID', options)}`,
-          employee_id: detailSubmission.value.employee_id,
-        })
+        if (form.value.score >= detailSubmission.value.course.passing_grade) {
+          await CertificationService.addCertification({
+            certification_id: '',
+            certification_name: detailSubmission.value.course_name,
+            institution_name: 'PT. Lorem Ipsum Dolo',
+            certification_date: `${new Date().toLocaleDateString('id-ID', options)}`,
+            employee_id: detailSubmission.value.employee_id,
+          })
+        }
         toast('Terimakasih atas penilaian anda, data berhasil disimpan!!!', {
           theme: 'colored',
           type: 'success',
