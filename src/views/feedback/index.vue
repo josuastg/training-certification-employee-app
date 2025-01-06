@@ -69,14 +69,22 @@ onBeforeMount(async () => {
         <thead>
           <tr>
             <th class="text-left">Course Name</th>
+            <th v-if="store.profile.role_name === 'admin'" class="text-left">Employee Name</th>
             <th class="text-left">Result</th>
-            <th class="text-left">Feedback From You</th>
-            <th class="text-left">Feedback From Admin</th>
+            <th class="text-left">
+              Feedback From {{ store.profile.role_name === 'admin' ? 'Employee' : 'You' }}
+            </th>
+            <th class="text-left">
+              Feedback From {{ store.profile.role_name === 'admin' ? 'You' : 'Admin' }}
+            </th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="item in feedbacks" :key="item.name">
             <td class="w-1/4">{{ item.course_name }}</td>
+            <td v-if="store.profile.role_name === 'admin'" class="w-1/4">
+              {{ item.employee_name }}
+            </td>
             <td class="w-1/8">{{ item.score }}</td>
             <td class="w-1/3">{{ item.comment || '-' }}</td>
             <td class="w-1/3">{{ item.comment_from_admin || '-' }}</td>
