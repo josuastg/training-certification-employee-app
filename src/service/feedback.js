@@ -1,5 +1,5 @@
 import { db } from "@/firebase";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 
 class FeedbackService {
     async addFeedback(feedback) {
@@ -12,6 +12,33 @@ class FeedbackService {
             return docRef.id;
         } catch (err) {
             console.error("Error adding feedback:", err);
+            throw err;
+        }
+    }
+
+    async fetchAllFeedback(key = '', value) {
+        try {
+            let q = '';
+            if (!key) {
+                q = query(
+                    collection(db, "feedback")
+                );
+            } else {
+                q = query(
+                    collection(db, "feedback"),
+                    where(key, "==", value)
+                );
+            }
+
+            const snapshot = await getDocs(q);
+            const feedback = [];
+
+            snapshot.forEach((doc) => {
+                feedback.push({ ...doc.data() })
+            })
+            return { result: true, resp: feedback };
+        } catch (err) {
+            console.error("Error fetching feedback by status:", err);
             throw err;
         }
     }

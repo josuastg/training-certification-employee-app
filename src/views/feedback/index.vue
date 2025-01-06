@@ -1,44 +1,55 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onBeforeMount, onMounted, ref } from 'vue'
 import MyIcon from '@/components/icon/index.vue'
 import FeedbackService from '@/service/feedback'
+import { useProfileStore } from '@/stores/profile'
+import { getAuth } from 'firebase/auth'
+import { useLoading } from 'vue-loading-overlay'
+import { toast } from 'vue3-toastify'
 
-const feedbacks = ref([
-  {
-    evaluation_id: 'xxxxxx-12321',
-    employee_id: 'employee123',
-    employee_name: 'Jon Doe', // Reference to the employee
-    course_id: 'course456',
-    course_name: 'Kelas Online Gratis NuxtJS Javascript Framework', // Reference to the course
-    score: 100,
-    comment: 'Great content, but could include more examples.',
-  },
-  {
-    evaluation_id: 'xxxxxx-1233213',
-    employee_id: 'employee123',
-    employee_name: 'Ergi A', // Reference to the employee
-    course_id: 'course456',
-    course_name: 'Kelas Online Belajar Flutter Test Driven Development - Weather Forecast', // Reference to the course
-    score: 90,
-    comment: 'The course was very insightful and well-structured.',
-  },
-  {
-    evaluation_id: 'xxxxxx-12321111',
-    employee_id: 'employee123',
-    employee_name: 'Kakang Rudi', // Reference to the employee
-    course_id: 'course456',
-    course_name:
-      'Kelas Online Gratis Become a Freelance Web Developer with WordPress and Elementor  ', // Reference to the course
-    score: 50,
-    comment: 'Great content, but could include more examples.',
-  },
-])
+const feedbacks = ref([])
 
+const store = useProfileStore()
+const $loading = useLoading({
+  color: '#dc2626',
+})
+const onGetFeedback = async () => {
+  const loader = $loading.show()
+  try {
+    const resp = await FeedbackService.fetchAllFeedback(
+      store.profile.role_name === 'admin' ? '' : 'employee_id',
+      store.profile.role_name === 'admin' ? '' : store.profile.employee_id
+    )
+    if (resp.result) {
+      feedbacks.value = resp.resp
+    }
+  } catch (error) {
+    toast('Terjadi error saat get all certification!!!', {
+      theme: 'colored',
+      type: 'error',
+      position: 'top-center',
+      closeOnClick: true,
+      hideProgressBar: true,
+      transition: 'bounce',
+      dangerouslyHTMLString: true,
+    })
+  } finally {
+    loader.hide()
+  }
+}
+const auth = getAuth()
+
+onBeforeMount(async () => {
+  await store.fetchProfile(auth.currentUser.uid)
+  onGetFeedback()
+})
 </script>
 <template>
   <div class="font-poppins">
     <div class="mb-4">
-      <p class="text-gray-800 text-xl font-semibold mb-1">Daftar Feedback Anda</p>
+      <p class="text-gray-800 text-xl font-semibold mb-1">
+        Daftar Feedback {{ store.profile.role_name === 'admin' ? 'Karyawan' : 'Anda' }}
+      </p>
       <p class="text-gray-500 text-sm leading-relaxed">
         Lihat semua umpan balik yang telah Anda terima di sini. Gunakan feedback ini untuk terus
         berkembang dan belajar.
@@ -51,14 +62,14 @@ const feedbacks = ref([
       >
         <MyIcon iconName="emptyData" />
         <p class="text-gray-500 text-sm leading-relaxed w-1/4 text-center">
-          Belum ada feedback anda, mohon menunggu feedback dari admin.
+          Belum ada feedback anda.
         </p>
       </div>
       <v-table v-else fixed-header hover height="600">
         <thead>
           <tr>
             <th class="text-left">Course Name</th>
-            <th class="text-left">Score</th>
+            <th class="text-left">Result</th>
             <th class="text-left">Comment</th>
           </tr>
         </thead>

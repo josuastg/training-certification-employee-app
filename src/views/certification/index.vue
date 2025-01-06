@@ -1,112 +1,61 @@
 <script setup>
-import { ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import MyIcon from '@/components/icon/index.vue'
 import generatePDF from './pdf/index'
 import { useLoading } from 'vue-loading-overlay'
+import CertificationService from '@/service/certification'
 import { useProfileStore } from '@/stores/profile'
+import { getAuth } from 'firebase/auth'
 const $loading = useLoading({
   color: '#dc2626',
 })
 const store = useProfileStore()
 
-const certifications = ref([
-  {
-    certification_id: 'XXXXXXX1',
-    certification_name: 'Kelas Online Gratis NuxtJS Javascript Framework',
-    institution_name: 'Google',
-    certification_date: '2024-01-15',
-    employee_id: 'employee123',
-  },
-  {
-    certification_id: 'XXXXXXX2',
-    certification_name: 'Kelas Online Belajar Flutter Test Driven Development - Weather Forecast',
-    institution_name: 'Oracle',
-    certification_date: '2024-01-15',
-    employee_id: 'employee123',
-  },
-  {
-    certification_id: 'XXXXXXX3',
-    certification_name: 'Flutter Developer',
-    institution_name: 'Google',
-    certification_date: '2024-01-15',
-    employee_id: 'employee123',
-  },
-  {
-    certification_id: 'XXXXXXX1',
-    certification_name:
-      'Kelas Online Gratis Become a Freelance Web Developer with WordPress and Elementor',
-    institution_name: 'Google',
-    certification_date: '2024-01-15',
-    employee_id: 'employee123',
-  },
-  {
-    certification_id: 'XXXXXXX2',
-    certification_name: 'Java Developer',
-    institution_name: 'Oracle',
-    certification_date: '2024-01-15',
-    employee_id: 'employee123',
-  },
-  {
-    certification_id: 'XXXXXXX3',
-    certification_name: 'Flutter Developer',
-    institution_name: 'Google',
-    certification_date: '2024-01-15',
-    employee_id: 'employee123',
-  },
-  {
-    certification_id: 'XXXXXXX1',
-    certification_name: 'Certified Data Analyst',
-    institution_name: 'Google',
-    certification_date: '2024-01-15',
-    employee_id: 'employee123',
-  },
-  {
-    certification_id: 'XXXXXXX2',
-    certification_name: 'Java Developer',
-    institution_name: 'Oracle',
-    certification_date: '2024-01-15',
-    employee_id: 'employee123',
-  },
-  {
-    certification_id: 'XXXXXXX3',
-    certification_name: 'Flutter Developer',
-    institution_name: 'Google',
-    certification_date: '2024-01-15',
-    employee_id: 'employee123',
-  },
-  {
-    certification_id: 'XXXXXXX1',
-    certification_name: 'Certified Data Analyst',
-    institution_name: 'Google',
-    certification_date: '2024-01-15',
-    employee_id: 'employee123',
-  },
-  {
-    certification_id: 'XXXXXXX2',
-    certification_name: 'Java Developer',
-    institution_name: 'Oracle',
-    certification_date: '2024-01-15',
-    employee_id: 'employee123',
-  },
-  {
-    certification_id: 'XXXXXXX3',
-    certification_name: 'Flutter Developer',
-    institution_name: 'Google',
-    certification_date: '2024-01-15',
-    employee_id: 'employee123',
-  },
-])
+const certifications = ref([])
 
 const onPrintPDF = async (item) => {
   const loader = $loading.show()
-  generatePDF({ ...item, employee_name: store.profile.employee_name })
+  generatePDF({ ...item, employee_name: item.employee.employee_name })
   loader.hide()
 }
+
+const onGetCertifcate = async () => {
+  const loader = $loading.show()
+  try {
+    const resp = await CertificationService.fetchAllSubmission(
+      store.profile.role_name === 'admin' ? '' : 'employee_id',
+      store.profile.role_name === 'admin' ? '' : store.profile.employee_id
+    )
+    if (resp.result) {
+      certifications.value = resp.resp
+    }
+  } catch (error) {
+    toast('Terjadi error saat get all certification!!!', {
+      theme: 'colored',
+      type: 'error',
+      position: 'top-center',
+      closeOnClick: true,
+      hideProgressBar: true,
+      transition: 'bounce',
+      dangerouslyHTMLString: true,
+    })
+  } finally {
+    loader.hide()
+  }
+}
+const auth = getAuth()
+
+onBeforeMount(async () => {
+  await store.fetchProfile(auth.currentUser.uid)
+  onGetCertifcate()
+})
 </script>
 <template>
   <div class="font-poppins">
     <div class="mb-4">
-      <p class="text-gray-800 text-xl font-semibold mb-1">Daftar Sertifikat Anda</p>
+      <p class="text-gray-800 text-xl font-semibold mb-1">
+        Daftar Sertifikat {{ store.profile.role_name === 'admin' ? 'Karyawan' : 'Anda' }}
+      </p>
       <p class="text-gray-500 text-sm leading-relaxed">
         Temukan semua sertifikat yang telah Anda peroleh di sini.
       </p>
@@ -126,6 +75,7 @@ const onPrintPDF = async (item) => {
           <tr>
             <th class="text-left">Certification ID</th>
             <th class="text-left">Certification Name</th>
+            <th class="text-left">Employee Name</th>
             <th class="text-left">Institution Name</th>
             <th class="text-left">Certification Date</th>
             <th class="text-left">Action</th>
@@ -134,7 +84,8 @@ const onPrintPDF = async (item) => {
         <tbody>
           <tr v-for="item in certifications" :key="item.name">
             <td>{{ item.certification_id }}</td>
-            <td class="w-1/3">{{ item.certification_name }}</td>
+            <td class="w-1/4">{{ item.certification_name }}</td>
+            <td>{{ item.employee.employee_name }}</td>
             <td>{{ item.institution_name }}</td>
             <td>{{ item.certification_date }}</td>
             <td class="font-poppins">

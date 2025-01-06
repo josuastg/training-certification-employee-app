@@ -118,15 +118,31 @@ const onGetDetailSubmission = async () => {
 
 const onSubmit = async () => {
   const loader = $loading.show()
+  const options = {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }
+  const optionsTime = {
+    hour: '2-digit',
+    minute: '2-digit',
+  }
   try {
     const submissionId = await SubmissionService.addSubmission({
       submission_file: '',
+      training_enrollment_id: detailCourse.value.training_enrollment_id,
       course_id: detailCourse.value.course.course_id,
       course_name: detailCourse.value.course.course_name,
       employee_id: store.profile.employee_id,
       employee_name: store.profile.employee_name,
       score: 0,
       status: '',
+      created_at: `${new Date().toLocaleDateString(
+        'id-ID',
+        options
+      )} ${new Date().toLocaleTimeString('id-ID', optionsTime)}`,
+      comment: '',
     })
     if (submissionId) {
       const linkFile = await uploadFile(detailCourse.value.course.course_name, form.value)
@@ -290,13 +306,13 @@ const titleSubmitted = computed(() => {
           <p class="text-gray-500 text-base leading-relaxed text-justify">
             {{ formatDate(detailCourse.course.start_date) }}
           </p>
-          <p class="text-black text-lg font-medium">Due</p>
+          <p class="text-black text-lg font-medium">Closed</p>
           <p class="text-gray-500 text-base leading-relaxed text-justify">
             {{ formatDate(detailCourse.course.end_date) }}
           </p>
         </div>
         <div class="flex flex-col gap-y-1">
-          <p class="text-black text-lg font-medium">Link Soal Pelatihan</p>
+          <p class="text-black text-lg font-medium">Link Pelatihan</p>
           <p
             @click="onOpenFile(detailCourse.course.course_file)"
             class="text-blue-500 lowercase text-base leading-relaxed text-justify cursor-pointer underline"
