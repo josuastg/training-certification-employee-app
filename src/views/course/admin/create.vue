@@ -32,7 +32,6 @@ let dialog = ref(false)
 let rules = [(v) => v.length <= 5000 || 'Maksimal 5000 karakter']
 let rulesPassingGrade = [(v) => v <= 100 || 'Maksimal Passing Grade 100']
 
-
 const onUploadFile = async (file) => {
   if (!file) return
 }
@@ -83,12 +82,18 @@ const onSaveCourse = async () => {
   dialog.value = false
   const loader = $loading.show()
   const data = [form.value.image_url, form.value.course_file]
+  const options = {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }
   try {
     const courseId = await CourseService.addCourse({
       course_name: form.value.course_name,
       description_course: form.value.description_course,
-      start_date: formatDate(form.value.start_date, 'YYYY-MM-DD'),
-      end_date: formatDate(form.value.end_date, 'YYYY-MM-DD'),
+      start_date: `${new Date(form.value.start_date).toLocaleDateString('id-ID', options)}`,
+      end_date: `${new Date(form.value.end_date).toLocaleDateString('id-ID', options)}`,
       status: form.value.status,
       image_url: '',
       course_file: '',
@@ -169,8 +174,8 @@ const isFormValid = computed(() => {
     form.value.status &&
     form.value.course_file &&
     form.value.image_url &&
-    (form.value.passing_grade > 0 &&
-    form.value.passing_grade <= 100)
+    form.value.passing_grade > 0 &&
+    form.value.passing_grade <= 100
   )
 })
 </script>
